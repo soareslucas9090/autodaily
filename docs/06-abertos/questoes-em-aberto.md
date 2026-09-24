@@ -1,0 +1,47 @@
+---
+id: QA-INDEX
+status: vigente
+atualizado: 2026-09-24
+---
+
+# Questões em aberto
+
+Nada nesta lista é requisito. Uma resposta futura promove o item a regra numa spec e remove o item daqui.
+
+## Resolvidas em 2026-09-24
+
+- **QA-001** — Face do card: primeira categoria em ordem alfabética; "Nome e mais..." se houver mais; só admin cadastra e exclui; excluir tira vínculo do card.
+- **QA-002** — Só texto obrigatório na publicação; id Trello e categorias opcionais; descrição vazia não passa.
+- **QA-003** — Editar tarefa atual no lugar, sem arquivar por edição.
+- **QA-004** — Dono (e admin) pode excluir a atual; na segunda leva o card mostrava a última restante automaticamente; na terceira leva o card fica em branco e a anterior só volta por ação explícita.
+- **QA-005** — Programador sem tarefa mantém card em branco no mural.
+- **QA-006** — Atual usa time de agora no denominador; guardada congela ciência e denominador ao sair da parede; admin e autor fora do denominador.
+- **QA-007** — Ciência pode ser desmarcada pelo próprio programador.
+- **QA-008** — Barra: preenchimento percentual normativo; texto interno x/y.
+- **QA-009** — Marcações de ciência no card em ordem alfabética do nome do programador.
+- **QA-010** — Admin não tem card e não entra na ciência.
+- **QA-011** — Filtros fechados do histórico: id do Trello, programador e período (início e fim). Seletor: Mês atual, Mês passado, Semana passada. Ao personalizar as datas, o seletor mostra Personalizado.
+- **QA-012** — Fuso do produto: America/Sao_Paulo em recortes de data.
+- **QA-013** — Tarefa excluída some do histórico e dos relatórios; exclusão definitiva, não desativação.
+- **QA-014** — Histórico: 20 itens por página por padrão, página expansível; ordenação por data, padrão mais recente primeiro.
+- **QA-015** — Relatório completo pela data de publicação: quebra por id do Trello, duração, média e ciência. Categoria só é exibida, sem recorte.
+- **QA-016** — Relatório simples com quantidades quebradas por programador e por dia, pela data de publicação; cada publicação conta como tarefa.
+- **QA-017** — Qualquer usuário autenticado emite relatório.
+- **QA-018** — Primeiro admin por `createsuperuser`; demais membros pela tela do produto.
+- **QA-019** — Admin edita membro; desativa e reativa; sem exclusão de membro. Desativado não entra no programa.
+- **QA-020** — Senha com no mínimo 6 caracteres, de qualquer tipo; sem recuperação; admin redefine senha de qualquer um.
+- **QA-021** — Cadastro e gestão de membros na tela do produto; `createsuperuser` só para o primeiro admin.
+- **QA-022** — Tema padrão claro; preferência de tema só no navegador; caneta continua por usuário.
+- **QA-023** — Dois temas jornal; escuro confortável, não preto.
+- **QA-024** — Caneta azul ou preta por usuário; controle na barra superior ao lado do tema.
+- **QA-025** — Insígnia continua o sinal sóbrio no canto superior direito quando x = y; sem símbolo adicional.
+- **QA-026** — Models básicos: somente data de criação e data de atualização.
+- **QA-027** — Model Usuario próprio; não o User padrão do Django como domínio.
+- **QA-028** — SQLite agora; PostgreSQL no futuro; o mesmo modelo serve aos dois.
+- **QA-029** — Ao excluir a atual, o card fica em branco; a tarefa anterior só volta se o programador pedir. Ao voltar, o time é o de agora e permanecem as ciências de quem ainda está ativo.
+
+## Perguntas abertas
+
+Não há questão em aberto nesta rodada.
+
+A próxima especificação deve acrescentar arquivo novo em `docs/02-especificacoes/` e atualizar `docs/README.md`, ou reabrir um item daqui se a regra mudar.
