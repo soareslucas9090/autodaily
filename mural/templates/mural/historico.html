@@ -1,0 +1,142 @@
+{% extends "nucleo/base.html" %}
+{% load tz %}
+
+{% block titulo %}Histórico — AutoDaily{% endblock %}
+
+{% block conteudo %}
+<main class="pagina">
+    <h1 class="pagina-titulo">Histórico</h1>
+    <form method="get" action="{% url 'historico' %}" id="form-historico" class="painel mb-8">
+        <div class="grade-filtros">
+            <div class="campo">
+                <label for="filtro-id-trello">Id Trello</label>
+                <input
+                    id="filtro-id-trello"
+                    type="text"
+                    name="id_trello"
+                    value="{{ filtro_id_trello }}"
+                    maxlength="120"
+                    class="input"
+                >
+            </div>
+            <div class="campo">
+                <label for="filtro-programador">Programador</label>
+                <select id="filtro-programador" name="programador" class="select">
+                    <option value="">Todos</option>
+                    {% for prog in programadores %}
+                    <option value="{{ prog.pk }}" {% if filtro_programador == prog.pk|stringformat:"s" %}selected{% endif %}>{{ prog.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="campo">
+                <label for="filtro-atalho">Período</label>
+                <select id="filtro-atalho" name="atalho" class="select">
+                    {% for valor, rotulo in atalhos %}
+                    <option value="{{ valor }}" {% if atalho_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="grade-filtros--datas">
+                <div class="campo">
+                    <label for="filtro-inicio">Início</label>
+                    <input id="filtro-inicio" type="date" name="inicio" value="{{ filtro_inicio }}" class="input">
+                </div>
+                <div class="campo">
+                    <label for="filtro-fim">Fim</label>
+                    <input id="filtro-fim" type="date" name="fim" value="{{ filtro_fim }}" class="input">
+                </div>
+            </div>
+            <div class="campo">
+                <label for="filtro-ordem">Ordenação</label>
+                <select id="filtro-ordem" name="ordem" class="select">
+                    <option value="decrescente" {% if ordem == 'decrescente' %}selected{% endif %}>Mais recente primeiro</option>
+                    <option value="crescente" {% if ordem == 'crescente' %}selected{% endif %}>Mais antiga primeiro</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="filtro-tamanho">Itens por página</label>
+                <select id="filtro-tamanho" name="tamanho" class="select">
+                    <option value="20" {% if tamanho == '20' %}selected{% endif %}>20</option>
+                    <option value="50" {% if tamanho == '50' %}selected{% endif %}>50</option>
+                    <option value="100" {% if tamanho == '100' %}selected{% endif %}>100</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn--primario mt-4">Filtrar</button>
+    </form>
+    <script>
+        (function () {
+            var atalho = document.getElementById('filtro-atalho');
+            var inicio = document.getElementById('filtro-inicio');
+            var fim = document.getElementById('filtro-fim');
+            var form = document.getElementById('form-historico');
+            function marcarPersonalizado() {
+                atalho.value = 'personalizado';
+            }
+            inicio.addEventListener('change', marcarPersonalizado);
+            fim.addEventListener('change', marcarPersonalizado);
+            atalho.addEventListener('change', function () {
+                if (atalho.value !== 'personalizado') {
+                    form.submit();
+                }
+            });
+        })();
+    </script>
+    {% if tarefas %}
+    <ul class="lista-dividida">
+        {% for tarefa in tarefas %}
+        <li>
+            <div class="flex-linha">
+                <div style="min-width:0;flex:1;">
+                    <p class="font-medium" style="margin:0 0 0.25rem;">{{ tarefa.autor.username }}</p>
+                    <p style="margin:0;white-space:pre-wrap;">{{ tarefa.texto }}</p>
+                    {% if tarefa.id_trello %}
+                    <p class="texto-meta">Trello: {{ tarefa.id_trello }}</p>
+                    {% endif %}
+                    <p class="texto-meta">
+                        Publicado:
+                        {% timezone "America/Sao_Paulo" %}{{ tarefa.criado_em|date:"d/m/Y H:i" }}{% endtimezone %}
+                    </p>
+                    {% with cats=tarefa.categorias.all|dictsort:"nome" %}
+                    {% if cats %}
+                    <p class="texto-categorias">
+                        {% if cats|length == 1 %}{{ cats.0.nome }}{% else %}{{ cats.0.nome }} e mais...{% endif %}
+                    </p>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                {% if user.papel == 'admin' or user.pk == tarefa.autor_id %}
+                <form method="post" action="{% url 'tarefa_excluir' tarefa.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="proximo" value="historico">
+                    <input type="hidden" name="retorno" value="{{ url_historico_atual }}">
+                    <button type="submit" class="btn btn--perigo">Excluir</button>
+                </form>
+                {% endif %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if page_obj.has_other_pages %}
+    <nav class="paginacao" aria-label="Paginação">
+        {% if page_obj.has_previous %}
+        <a
+            href="?{% if consulta_paginacao %}{{ consulta_paginacao }}&{% endif %}page={{ page_obj.previous_page_number }}"
+            class="btn btn--secundario"
+        >Anterior</a>
+        {% endif %}
+        <span class="paginacao__info">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a
+            href="?{% if consulta_paginacao %}{{ consulta_paginacao }}&{% endif %}page={{ page_obj.next_page_number }}"
+            class="btn btn--secundario"
+        >Próxima</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <p class="texto-vazio">Nenhuma tarefa guardada neste recorte.</p>
+    {% endif %}
+</main>
+{% endblock %}
+

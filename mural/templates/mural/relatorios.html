@@ -1,0 +1,143 @@
+{% extends "nucleo/base.html" %}
+
+{% block titulo %}Relatórios — AutoDaily{% endblock %}
+
+{% block conteudo %}
+<main class="pagina">
+    <h1 class="pagina-titulo">Relatórios</h1>
+    <form method="get" action="{% url 'relatorios' %}" id="form-relatorios" class="painel mb-8">
+        <div class="grade-filtros">
+            <div class="campo">
+                <label for="filtro-modo">Modo</label>
+                <select id="filtro-modo" name="modo" class="select">
+                    <option value="simples" {% if modo == 'simples' %}selected{% endif %}>Simples</option>
+                    <option value="completo" {% if modo == 'completo' %}selected{% endif %}>Completo</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="filtro-atalho">Período</label>
+                <select id="filtro-atalho" name="atalho" class="select">
+                    {% for valor, rotulo in atalhos %}
+                    <option value="{{ valor }}" {% if atalho_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="grade-filtros--datas">
+                <div class="campo">
+                    <label for="filtro-inicio">Início</label>
+                    <input id="filtro-inicio" type="date" name="inicio" value="{{ filtro_inicio }}" class="input">
+                </div>
+                <div class="campo">
+                    <label for="filtro-fim">Fim</label>
+                    <input id="filtro-fim" type="date" name="fim" value="{{ filtro_fim }}" class="input">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn--primario mt-4">Emitir</button>
+    </form>
+    <script>
+        (function () {
+            var atalho = document.getElementById('filtro-atalho');
+            var inicio = document.getElementById('filtro-inicio');
+            var fim = document.getElementById('filtro-fim');
+            var form = document.getElementById('form-relatorios');
+            function marcarPersonalizado() {
+                atalho.value = 'personalizado';
+            }
+            inicio.addEventListener('change', marcarPersonalizado);
+            fim.addEventListener('change', marcarPersonalizado);
+            atalho.addEventListener('change', function () {
+                if (atalho.value !== 'personalizado') {
+                    form.submit();
+                }
+            });
+        })();
+    </script>
+
+    <section class="mb-8">
+        <h2 class="secao-titulo">Por programador</h2>
+        {% if dados.por_programador %}
+        <ul class="lista-relatorio">
+            {% for linha in dados.por_programador %}
+            <li>
+                <span>{{ linha.username }}</span>
+                <span>{{ linha.quantidade }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="texto-vazio">Nenhuma tarefa no período.</p>
+        {% endif %}
+    </section>
+
+    <section class="mb-8">
+        <h2 class="secao-titulo">Por dia</h2>
+        {% if dados.por_dia %}
+        <ul class="lista-relatorio">
+            {% for linha in dados.por_dia %}
+            <li>
+                <span>{{ linha.data }}</span>
+                <span>{{ linha.quantidade }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="texto-vazio">Nenhuma tarefa no período.</p>
+        {% endif %}
+    </section>
+
+    {% if modo == 'completo' %}
+    <section class="mb-8">
+        <h2 class="secao-titulo">Por id do Trello</h2>
+        {% if dados.por_id_trello %}
+        <ul class="lista-relatorio">
+            {% for linha in dados.por_id_trello %}
+            <li style="display:block;">
+                <span class="font-medium">{{ linha.id }}</span>
+                — {{ linha.quantidade }} tarefa{{ linha.quantidade|pluralize }}
+                — {{ linha.programadores_distintos }} programador{{ linha.programadores_distintos|pluralize:"es" }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="texto-vazio">Nenhuma tarefa no período.</p>
+        {% endif %}
+    </section>
+
+    <section class="mb-8">
+        <h2 class="secao-titulo">Resumo de duração</h2>
+        {% if dados.tempo_medio_texto %}
+        <p>Tempo médio: {{ dados.tempo_medio_texto }}</p>
+        {% else %}
+        <p class="texto-vazio">Sem tarefas para calcular média.</p>
+        {% endif %}
+        <p class="mt-3">Ciência fechada: {{ dados.ciencia_fechadas }}</p>
+    </section>
+
+    <section>
+        <h2 class="secao-titulo">Tarefas do período</h2>
+        {% if dados.tarefas %}
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.75rem;">
+            {% for linha in dados.tarefas %}
+            <li class="painel" style="padding:1rem;">
+                <p class="font-medium" style="margin:0;">{{ linha.tarefa.texto }}</p>
+                {% if linha.rotulo_categorias %}
+                <p class="texto-meta">{{ linha.rotulo_categorias }}</p>
+                {% endif %}
+                <p class="texto-meta" style="margin-top:0.35rem;">
+                    {{ linha.tarefa.autor.username }}
+                    · {{ linha.duracao_texto }}
+                    · ciência {{ linha.progresso.x }}/{{ linha.progresso.y }}
+                    {% if linha.tarefa.id_trello %}· {{ linha.tarefa.id_trello }}{% endif %}
+                </p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="texto-vazio">Nenhuma tarefa no período.</p>
+        {% endif %}
+    </section>
+    {% endif %}
+</main>
+{% endblock %}
+

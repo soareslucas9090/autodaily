@@ -1,0 +1,29 @@
+{
+  "name": "autodaily",
+  "version": "1.0.0",
+  "description": "O AutoDaily mostra somente a **tarefa atual** de cada programador, como um papel colado na parede. Cada programador publica uma descrição breve daquilo em que está trabalhando agora. Ao publicar outra tarefa, a anterior é guardada no histórico.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/entrada.css -o ./nucleo/static/nucleo/estilos.css --minify --content \"./nucleo/templates/**/*.html\" \"./mural/templates/**/*.html\"",
+    "watch:css": "tailwindcss -i ./assets/css/entrada.css -o ./nucleo/static/nucleo/estilos.css --watch --content \"./nucleo/templates/**/*.html\" \"./mural/templates/**/*.html\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soareslucas9090/autodaily.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/soareslucas9090/autodaily/issues"
+  },
+  "homepage": "https://github.com/soareslucas9090/autodaily#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

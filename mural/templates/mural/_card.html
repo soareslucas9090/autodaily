@@ -1,0 +1,217 @@
+<article
+    id="card-{{ programador.pk }}"
+    class="card-papel"
+>
+    <h2 class="card-papel__titulo">{{ programador.username }}</h2>
+    {% if tarefa %}
+    {% if progresso %}
+    {% if progresso.completo %}
+    <span
+        class="insignia-lido"
+        aria-label="Ciência completa"
+    >Lido</span>
+    {% endif %}
+    <div
+        class="barra-progresso"
+        role="progressbar"
+        aria-valuenow="{{ progresso.percentual }}"
+        aria-valuemin="0"
+        aria-valuemax="100"
+    >
+        <div
+            class="barra-progresso__fill"
+            style="width: {{ progresso.percentual }}%;"
+        >{{ progresso.x }}/{{ progresso.y }}</div>
+    </div>
+    {% endif %}
+    <div class="mb-4">
+        <p class="card-descricao card-descricao--{% if usuario_logado.tinta == 'azul' %}azul{% else %}preta{% endif %}">{{ tarefa.texto }}</p>
+        {% if tarefa.id_trello %}
+        <p class="texto-meta">Trello: {{ tarefa.id_trello }}</p>
+        {% endif %}
+        {% if rotulo_categorias %}
+        <p class="texto-categorias">{{ rotulo_categorias }}</p>
+        {% endif %}
+    </div>
+    {% if pode_editar and form_editar %}
+    <form
+        method="post"
+        action="{% url 'tarefa_editar' tarefa.pk %}"
+        hx-post="{% url 'tarefa_editar' tarefa.pk %}"
+        hx-target="#card-{{ programador.pk }}"
+        hx-swap="outerHTML"
+        class="bloco-form"
+    >
+        {% csrf_token %}
+        <div class="campo">
+            <label for="editar-texto-{{ programador.pk }}">Descrição</label>
+            <textarea
+                id="editar-texto-{{ programador.pk }}"
+                name="texto"
+                rows="3"
+                class="textarea"
+            >{{ form_editar.texto.value|default:'' }}</textarea>
+            {% if form_editar.texto.errors %}
+            <p class="erro-campo">{{ form_editar.texto.errors.0 }}</p>
+            {% endif %}
+        </div>
+        <div class="campo">
+            <label for="editar-trello-{{ programador.pk }}">Id Trello</label>
+            <input
+                id="editar-trello-{{ programador.pk }}"
+                type="text"
+                name="id_trello"
+                value="{{ form_editar.id_trello.value|default:'' }}"
+                maxlength="120"
+                class="input"
+            >
+        </div>
+        <div class="campo">
+            <label for="editar-categorias-{{ programador.pk }}">Categorias</label>
+            <select
+                id="editar-categorias-{{ programador.pk }}"
+                name="categorias"
+                multiple
+                class="select"
+            >
+                {% for opcao in form_editar.categorias.field.queryset %}
+                <option
+                    value="{{ opcao.pk }}"
+                    {% if opcao.pk in form_editar.categorias.value %}selected{% endif %}
+                >{{ opcao.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn--primario">Salvar</button>
+    </form>
+    {% endif %}
+    {% if pode_excluir %}
+    <form
+        method="post"
+        action="{% url 'tarefa_excluir' tarefa.pk %}"
+        hx-post="{% url 'tarefa_excluir' tarefa.pk %}"
+        hx-target="#card-{{ programador.pk }}"
+        hx-swap="outerHTML"
+        class="mt-3"
+    >
+        {% csrf_token %}
+        <button type="submit" class="btn btn--perigo">Excluir tarefa</button>
+    </form>
+    {% endif %}
+    {% if linhas_ciencia %}
+    <ul class="lista-ciencia border-t border-stone-200">
+        {% for linha in linhas_ciencia %}
+        <li class="lista-ciencia__item">
+            {% if linha.pode_alternar %}
+            <form
+                method="post"
+                action="{% url 'tarefa_ciencia' tarefa.pk %}"
+                hx-post="{% url 'tarefa_ciencia' tarefa.pk %}"
+                hx-target="#card-{{ programador.pk }}"
+                hx-swap="outerHTML"
+                style="display:inline;margin:0;"
+            >
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    class="ciencia-botao"
+                    aria-pressed="{{ linha.marcado|yesno:'true,false' }}"
+                    title="{% if linha.marcado %}Desmarcar ciência{% else %}Marcar ciência{% endif %}"
+                >
+                    <span class="pino{% if linha.marcado %} pino--marcado{% endif %}" aria-hidden="true"></span>
+                    <span class="sr-only">{{ linha.programador.username }}</span>
+                </button>
+            </form>
+            <span>{{ linha.programador.username }}</span>
+            {% else %}
+            <span class="pino--somente-leitura" aria-hidden="true">
+                <span class="pino{% if linha.marcado %} pino--marcado{% endif %}"></span>
+            </span>
+            <span>{{ linha.programador.username }}</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% elif pode_publicar and form_publicar %}
+    {% if pode_retornar %}
+    <form
+        method="post"
+        action="{% url 'tarefa_retornar' programador.pk %}"
+        hx-post="{% url 'tarefa_retornar' programador.pk %}"
+        hx-target="#card-{{ programador.pk }}"
+        hx-swap="outerHTML"
+        class="mb-4"
+    >
+        {% csrf_token %}
+        <button type="submit" class="btn btn--primario">Retornar tarefa anterior</button>
+    </form>
+    {% endif %}
+    <form
+        method="post"
+        action="{% url 'tarefa_publicar' %}"
+        hx-post="{% url 'tarefa_publicar' %}"
+        hx-target="#card-{{ programador.pk }}"
+        hx-swap="outerHTML"
+        class="bloco-form"
+    >
+        {% csrf_token %}
+        <div class="campo">
+            <label for="publicar-texto-{{ programador.pk }}">Descrição</label>
+            <textarea
+                id="publicar-texto-{{ programador.pk }}"
+                name="texto"
+                rows="3"
+                class="textarea"
+            >{{ form_publicar.texto.value|default:'' }}</textarea>
+            {% if form_publicar.texto.errors %}
+            <p class="erro-campo">{{ form_publicar.texto.errors.0 }}</p>
+            {% endif %}
+        </div>
+        <div class="campo">
+            <label for="publicar-trello-{{ programador.pk }}">Id Trello</label>
+            <input
+                id="publicar-trello-{{ programador.pk }}"
+                type="text"
+                name="id_trello"
+                value="{{ form_publicar.id_trello.value|default:'' }}"
+                maxlength="120"
+                class="input"
+            >
+        </div>
+        <div class="campo">
+            <label for="publicar-categorias-{{ programador.pk }}">Categorias</label>
+            <select
+                id="publicar-categorias-{{ programador.pk }}"
+                name="categorias"
+                multiple
+                class="select"
+            >
+                {% for opcao in form_publicar.categorias.field.queryset %}
+                <option
+                    value="{{ opcao.pk }}"
+                    {% if opcao.pk in form_publicar.categorias.value %}selected{% endif %}
+                >{{ opcao.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn--primario">Publicar</button>
+    </form>
+    {% else %}
+    <p class="texto-meta">Sem tarefa na parede.</p>
+    {% if pode_retornar %}
+    <form
+        method="post"
+        action="{% url 'tarefa_retornar' programador.pk %}"
+        hx-post="{% url 'tarefa_retornar' programador.pk %}"
+        hx-target="#card-{{ programador.pk }}"
+        hx-swap="outerHTML"
+        class="mt-4"
+    >
+        {% csrf_token %}
+        <button type="submit" class="btn btn--primario">Retornar tarefa anterior</button>
+    </form>
+    {% endif %}
+    {% endif %}
+</article>
+

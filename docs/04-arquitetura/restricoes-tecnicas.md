@@ -8,7 +8,7 @@ atualizado: 2026-09-24
 
 Isto registra restrições pedidas para quando a implementação for liberada. Não há código aqui. Não criar apps agora.
 
-**Fato observado (não decisão de produto):** o repositório já tem o projeto Django `autodaily` gerado por `startproject`, Django 5.2.14. Apps de domínio ainda não existem. Isso **não** autoriza implementar.
+**Fato observado:** o repositório tem o projeto Django `autodaily` (Django 5.2.x), apps `nucleo` e `mural`, templates do produto e testes automatizados. Detalhes de front e estáticos: [frontend-estilos-e-tailwind.md](frontend-estilos-e-tailwind.md).
 
 ## RA-001 Servidor
 
@@ -17,6 +17,8 @@ Django. Interface no próprio Django. Sem frontend separado.
 ## RA-002 Interface
 
 Tailwind e HTMX. Views de classe (class-based views). Proibido padrão de views função para as telas do produto, salvo se uma ADR futura abrir exceção.
+
+**Implementação atual:** HTMX em uso. O visual está em CSS no template base; **Tailwind compilado ainda não está no repositório**. Ver [frontend-estilos-e-tailwind.md](frontend-estilos-e-tailwind.md) para estado do código e passos de `npm` / CLI.
 
 ## RA-003 Bases reutilizáveis
 
@@ -50,9 +52,7 @@ O pacote admin veio do `startproject`. Cadastro e gestão de membros são **tela
 
 O código do produto é escrito em **português**, com exceção do vocabulário já estabelecido de programação e de framework (View, Model, Mixin, Template, URL, QuerySet, nomes do Django, do Python, do Tailwind e do HTMX). Nomes de domínio, campos, módulos e rótulos de código do AutoDaily ficam em português (Usuario, Tarefa, Categoria, Ciencia). Documentação continua em pt-BR.
 
-## O que esta arquitetura não faz ainda
+## Pendências de arquitetura (front)
 
-- Não há apps de domínio.
-- Não há models de domínio.
-- Não há templates do produto.
-- Não há tarefas de implementação liberadas por esta rodada.
+- Pipeline **Tailwind** local documentado, mas **não integrado** ao código — ver [frontend-estilos-e-tailwind.md](frontend-estilos-e-tailwind.md).
+- PostgreSQL em produção (SQLite no desenvolvimento atual) — RA-008.
