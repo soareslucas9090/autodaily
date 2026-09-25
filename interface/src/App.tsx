@@ -52,6 +52,16 @@ export default function App() {
             </>
           )}
         </nav>
+        {eu.papel === "programador" && (
+          <SeletorDeCor
+            eu={eu}
+            aoEscolher={(pessoa) => {
+              setEu(pessoa);
+              api.mural().then(setMural).catch((erro: Error) => setAviso(erro.message));
+            }}
+            aoFalhar={(erro) => setAviso(erro.message)}
+          />
+        )}
         <button
           type="button"
           className="icone caneta"
@@ -80,7 +90,7 @@ export default function App() {
       <main className="miolo" key={tela}>
         {aviso && <p className="aviso">{aviso}</p>}
         {tela === "mural" && mural && (
-          <MuralTela mural={mural} eu={eu} aoMudar={setMural} aoAvisar={setAviso} aoEu={setEu} />
+          <MuralTela mural={mural} eu={eu} aoMudar={setMural} aoAvisar={setAviso} />
         )}
         {tela === "historico" && <Historico eu={eu} />}
         {tela === "relatorios" && <Relatorios />}
@@ -126,18 +136,16 @@ function MuralTela({
   eu,
   aoMudar,
   aoAvisar,
-  aoEu,
 }: {
   mural: Mural;
   eu: Eu;
   aoMudar: (mural: Mural) => void;
   aoAvisar: (texto: string) => void;
-  aoEu: (eu: Eu) => void;
 }) {
   return (
     <section className="mural" aria-label="Mural">
       {mural.cards.map((card) => (
-        <CardFolha key={card.programador.id} card={card} eu={eu} aoMudar={aoMudar} aoAvisar={aoAvisar} aoEu={aoEu} />
+        <CardFolha key={card.programador.id} card={card} eu={eu} aoMudar={aoMudar} aoAvisar={aoAvisar} />
       ))}
     </section>
   );
@@ -148,13 +156,11 @@ function CardFolha({
   eu,
   aoMudar,
   aoAvisar,
-  aoEu,
 }: {
   card: Card;
   eu: Eu;
   aoMudar: (mural: Mural) => void;
   aoAvisar: (texto: string) => void;
-  aoEu: (eu: Eu) => void;
 }) {
   const tarefa = card.tarefa;
   const [aviso, setAviso] = useState("");
@@ -293,17 +299,6 @@ function CardFolha({
           <p className="meta">Sem tarefa agora.</p>
         )}
       <p className="aviso">{aviso}</p>
-      {eu.id === card.programador.id && eu.papel === "programador" && (
-        <EscolhaDeCor
-          atual={card.programador.cor}
-          username={eu.username}
-          aoFalhar={falha}
-          aoEscolher={(pessoa) => {
-            aoEu(pessoa);
-            api.mural().then(aoMudar).catch(falha);
-          }}
-        />
-      )}
     </article>
   );
 }
@@ -637,36 +632,64 @@ function Taxinha({ hex, marcada }: { hex: string | null; marcada: boolean }) {
   );
 }
 
-function EscolhaDeCor({
-  atual,
-  username,
+function SeletorDeCor({
+  eu,
   aoEscolher,
   aoFalhar,
 }: {
-  atual: Cor | null;
-  username: string;
+  eu: Eu;
   aoEscolher: (eu: Eu) => void;
   aoFalhar: (erro: Error) => void;
 }) {
+  const [aberto, setAberto] = useState(false);
   const [cores, setCores] = useState<(Cor & { ocupadaPor: string | null })[]>([]);
+  const caixa = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
+    if (!aberto) return;
     api.cores().then(setCores).catch(aoFalhar);
-  }, [atual?.id]);
-  const livres = cores.filter((item) => !item.ocupadaPor || item.ocupadaPor === username);
-  if (livres.length === 0) return null;
+    function fechar(evento: MouseEvent) {
+      if (!caixa.current?.contains(evento.target as Node)) setAberto(false);
+    }
+    document.addEventListener("mousedown", fechar);
+    return () => document.removeEventListener("mousedown", fechar);
+  }, [aberto]);
+
+  const livres = cores.filter((item) => !item.ocupadaPor || item.ocupadaPor === eu.username);
+
   return (
-    <div className="amostras" role="group" aria-label="Cor do post-it">
-      {livres.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          className="amostra"
-          style={{ background: item.hex }}
-          aria-label={item.nome}
-          aria-pressed={atual?.id === item.id}
-          onClick={() => api.escolherCor(item.id).then(aoEscolher).catch(aoFalhar)}
-        />
-      ))}
+    <div className="seletor-cor" ref={caixa}>
+      <button
+        type="button"
+        className="icone"
+        aria-label={eu.cor ? `Cor do card: ${eu.cor.nome}` : "Escolher cor do card"}
+        aria-expanded={aberto}
+        onClick={() => setAberto((v) => !v)}
+      >
+        <i className="minicard" style={{ ["--postit" as string]: eu.cor?.hex ?? "var(--papel)" }} />
+      </button>
+      {aberto && (
+        <div className="popup-cor" role="dialog" aria-label="Cores disponíveis">
+          {livres.length === 0 && <p className="meta">Nenhuma cor livre</p>}
+          {livres.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className="opcao-cor"
+              aria-pressed={eu.cor?.id === item.id}
+              onClick={() => {
+                api.escolherCor(item.id).then((pessoa) => {
+                  aoEscolher(pessoa);
+                  setAberto(false);
+                }).catch(aoFalhar);
+              }}
+            >
+              <i className="minicard" style={{ ["--postit" as string]: item.hex }} />
+              {item.nome}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -694,7 +717,7 @@ function Cores() {
       <ul>
         {lista.map((item) => (
           <li key={item.id}>
-            <i className="amostra amostra-fixa" style={{ background: item.hex }} />
+            <i className="amostra-fixa" style={{ background: item.hex }} />
             {item.nome}
             {item.ocupadaPor ? ` · ${item.ocupadaPor}` : ""}
             <button type="button" className="acao" onClick={() => api.excluirCor(item.id).then(setLista)}>Excluir</button>
