@@ -98,6 +98,11 @@ export function criarApp(banco: Banco, relogio: () => Date = () => new Date()) {
     return c.json(produto.mural(c.get("usuarioId")));
   });
 
+  app.post("/api/tarefas/:id/guardar", (c) => {
+    produto.tirarDaParede(c.get("usuarioId"), c.req.param("id"));
+    return c.json(produto.mural(c.get("usuarioId")));
+  });
+
   app.delete("/api/tarefas/:id", (c) => {
     produto.excluirTarefa(c.get("usuarioId"), c.req.param("id"));
     return c.json(produto.mural(c.get("usuarioId")));

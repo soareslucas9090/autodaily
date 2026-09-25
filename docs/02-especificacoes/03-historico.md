@@ -48,7 +48,7 @@ Ordenação é **separada** do filtro: por data, crescente ou decrescente.
 
 **Padrão:** 20 itens por página.
 
-A página é **expansível**: o usuário pode ampliar a quantidade de itens por página. Não há lista fixa de tamanhos alternativos nesta spec.
+A página é **expansível**: o usuário pode ampliar a quantidade de itens por página. Não há lista fixa de tamanhos alternativos nesta spec. Ampliar (“mostrar mais”) continua aplicando os filtros já escolhidos (id do Trello, programador, período e ordem). O controle só aparece enquanto ainda houver itens do recorte além dos já listados. Recorte vazio mostra que não há papel guardado naquele filtro, sem fingir que há mais páginas.
 
 ## RF-012 Exclusão
 

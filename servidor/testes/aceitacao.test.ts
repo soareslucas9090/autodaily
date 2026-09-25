@@ -131,6 +131,29 @@ describe("aceitação", () => {
     expect(card.tarefa?.ciencias[0].marcada).toBe(true);
   });
 
+  it("tirar da parede guarda e o histórico respeita filtro e página", () => {
+    const { produto, criar, avancar } = novo();
+    const ana = criar("ana");
+    avancar("2026-09-10T15:00:00.000Z");
+    const publicada = produto.publicar(ana.id, { descricao: "na parede", idTrello: "T1" });
+    produto.tirarDaParede(ana.id, publicada.id);
+    const card = produto.mural(ana.id).cards[0];
+    expect(card.tarefa).toBeNull();
+    expect(card.podeRetornar).toBe(true);
+    const mes = mesAtual(new Date("2026-09-10T15:00:00.000Z"));
+    const lista = produto.historico({ inicio: mes.inicio, fim: mes.fim, limite: 20 });
+    expect(lista.total).toBe(1);
+    expect(lista.itens.map((i) => i.descricao)).toEqual(["na parede"]);
+    const fora = produto.historico({ inicio: "2026-08-01", fim: "2026-08-31" });
+    expect(fora.itens).toHaveLength(0);
+    const paginaCurta = produto.historico({ inicio: mes.inicio, fim: mes.fim, limite: 1 });
+    expect(paginaCurta.itens).toHaveLength(1);
+    expect(paginaCurta.total).toBe(1);
+    produto.retornarAnterior(ana.id);
+    expect(produto.mural(ana.id).cards[0].tarefa?.descricao).toBe("na parede");
+    expect(produto.historico({ inicio: mes.inicio, fim: mes.fim }).itens).toHaveLength(0);
+  });
+
   it("programador não exclui tarefa alheia", () => {
     const { produto, criar } = novo();
     const ana = criar("ana");

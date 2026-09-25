@@ -34,7 +34,7 @@ Só o admin inclui gente no time. Só o admin cadastra ou exclui categoria. Admi
 
 ## 5. Exclusão é do dono, e também do admin
 
-O dono da tarefa exclui as próprias tarefas, inclusive a atual. O admin pode excluir tarefa de qualquer programador. Excluir a atual deixa o card em branco; tarefa guardada anterior só volta ao mural se o programador acionar a opção explícita de retornar a mais recente.
+O dono tira a própria tarefa atual da parede, e isso guarda o papel no histórico. O dono exclui de verdade as próprias tarefas no histórico. O admin pode tirar da parede ou excluir tarefa de qualquer programador. Tirar da parede ou excluir a atual deixa o card em branco; tarefa guardada só volta ao mural se o programador acionar a opção explícita de retornar a mais recente.
 
 **Proíbe:** um programador excluir tarefa de outro; repor automaticamente no card outra tarefa só por ter excluído a atual.
 

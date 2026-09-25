@@ -65,11 +65,13 @@ Se houver categorias, a face mostra a **primeira em ordem alfabética**. Se houv
 
 **Critério de aceite:** Dado programador que não é dono, **quando** interage com card alheio, **então** não obtém cursor de edição nem altera o conteúdo.
 
-## RF-018 Exclusão da atual
+## RF-018 Tirar da parede
 
-**Regra:** o dono pode excluir a tarefa atual. O admin também pode excluir a tarefa atual (ou qualquer tarefa) de qualquer programador (permissão detalhada em ESP-05). A exclusão é definitiva: a tarefa deixa de existir no produto (histórico e relatórios).
+**Regra:** o dono pode tirar a tarefa atual da parede. O admin também pode tirar a tarefa atual de qualquer programador. **Tirar da parede guarda** o papel: ele sai do mural, congela ciência e denominador, e continua no histórico, sujeito aos filtros de id do Trello, programador e período (data de publicação). Não é exclusão definitiva.
 
-Após exclusão da atual, o card fica **em branco**, mesmo que existam tarefas guardadas desse programador. Se existir tarefa guardada, o card em branco oferece opção de **retornar** a tarefa guardada mais recente. A tarefa excluída não volta.
+Após tirar a atual, o card fica **em branco**, mesmo que existam outras tarefas guardadas. Se existir tarefa guardada, o card em branco oferece opção de **retornar** a mais recente. A tarefa que acabou de sair da parede é a mais recente guardada, então o retorno a traz de volta.
+
+A **exclusão definitiva** (some do histórico e dos relatórios, não volta) continua no histórico, para o dono e para o admin (RF-012 e ESP-05). Excluir a tarefa que ainda está na parede também deixa o card em branco, com a mesma opção de retorno se restar tarefa guardada. A tarefa excluída não volta.
 
 Ao retornar a anterior (ver ESP-02 para ciência e denominador):
 
@@ -79,13 +81,13 @@ Ao retornar a anterior (ver ESP-02 para ciência e denominador):
 - programador ativo que não tinha marcação aparece desmarcado, com opção de marcar;
 - programador desativado não entra no time de agora nem nas marcações.
 
-**Critério de aceite:** Dado programador com tarefa atual e tarefas guardadas, **quando** o dono exclui a atual, **então** o card fica em branco e **não** exibe sozinho a tarefa guardada mais recente.
+**Critério de aceite:** Dado programador com tarefa atual, **quando** o dono tira essa tarefa da parede, **então** o card fica em branco, a tarefa permanece no histórico no recorte da data de publicação e **não** é reexibida sozinha no mural.
 
-**Critério de aceite:** Dado programador com tarefa atual e pelo menos uma tarefa guardada, **quando** o dono exclui a atual e aciona a opção de retornar a anterior, **então** o card passa a mostrar a tarefa guardada mais recente como tarefa atual.
+**Critério de aceite:** Dado programador com tarefa atual e pelo menos uma tarefa guardada, **quando** o dono tira a atual da parede e aciona a opção de retornar a anterior, **então** o card passa a mostrar a tarefa guardada mais recente como tarefa atual.
 
-**Critério de aceite:** Dado programador com tarefa atual e sem tarefa guardada, **quando** o dono exclui a atual, **então** o card fica em branco sem opção de retornar anterior.
+**Critério de aceite:** Dado programador com tarefa atual e sem outra tarefa guardada, **quando** o dono tira a atual da parede, **então** o card fica em branco e a opção de retorno traz de volta essa mesma tarefa, que acabou de ser guardada.
 
-**Critério de aceite:** Dado admin autenticado, **quando** exclui a tarefa atual de um programador, **então** o card desse programador segue as mesmas regras de card em branco e opção de retorno.
+**Critério de aceite:** Dado admin autenticado, **quando** tira da parede a tarefa atual de um programador, **então** o card desse programador segue as mesmas regras de card em branco e opção de retorno.
 
 ## RF-019 Card vazio
 

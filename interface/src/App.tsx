@@ -254,7 +254,7 @@ function CardFolha({
             ))}
           </ul>
           {tarefa.podeExcluir && (
-            <button type="button" className="acao" onClick={() => api.excluir(tarefa.id).then(aoMudar).catch(falha)}>
+            <button type="button" className="acao" onClick={() => api.guardar(tarefa.id).then(aoMudar).catch(falha)}>
               Tirar da parede
             </button>
           )}
@@ -367,6 +367,7 @@ function Historico({ eu }: { eu: Eu }) {
   const [limite, setLimite] = useState(20);
   const [programadores, setProgramadores] = useState<{ id: string; username: string }[]>([]);
   const [itens, setItens] = useState<{ id: string; descricao: string; autor: string; autorId: string; idTrello: string | null; criadoEm: string; rotuloCategoria: string | null; x: number; y: number }[]>([]);
+  const [total, setTotal] = useState(0);
   const [aviso, setAviso] = useState("");
 
   useEffect(() => {
@@ -379,7 +380,7 @@ function Historico({ eu }: { eu: Eu }) {
     const params = new URLSearchParams({ inicio, fim, ordem, limite: String(limite) });
     if (idTrello) params.set("idTrello", idTrello);
     if (programadorId) params.set("programadorId", programadorId);
-    api.historico(params).then((r) => setItens(r.itens)).catch((erro: Error) => setAviso(erro.message));
+    api.historico(params).then((r) => { setItens(r.itens); setTotal(r.total); }).catch((erro: Error) => setAviso(erro.message));
   }, [inicio, fim, idTrello, programadorId, ordem, limite]);
 
   return (
@@ -425,7 +426,10 @@ function Historico({ eu }: { eu: Eu }) {
           <li key={item.id} className="folha">
             <p className="nome">{item.autor}</p>
             <p className="escrita">{item.descricao}</p>
-            <p className="meta">{item.idTrello ?? "sem id"} · {item.rotuloCategoria ?? "sem categoria"} · {item.x}/{item.y}</p>
+            <p className="meta">
+              {new Date(item.criadoEm).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}
+              {" · "}{item.idTrello ?? "sem id"} · {item.rotuloCategoria ?? "sem categoria"} · {item.x}/{item.y}
+            </p>
             {(eu.papel === "admin" || eu.id === item.autorId) && (
               <button type="button" className="acao" onClick={() => api.excluir(item.id).then(() => setItens((lista) => lista.filter((i) => i.id !== item.id)))}>
                 Excluir
@@ -434,7 +438,12 @@ function Historico({ eu }: { eu: Eu }) {
           </li>
         ))}
       </ul>
-      <button type="button" className="acao" onClick={() => setLimite((n) => n + 20)}>Mostrar mais</button>
+      {itens.length === 0 && <p className="meta">Nenhum papel guardado nesse recorte.</p>}
+      {itens.length < total && (
+        <button type="button" className="acao" onClick={() => setLimite((n) => n + 20)}>
+          Mostrar mais
+        </button>
+      )}
       <p className="aviso">{aviso}</p>
     </section>
   );

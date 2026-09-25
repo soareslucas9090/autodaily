@@ -278,10 +278,8 @@ export class Produto {
       .get();
   }
 
-  private guardarAtual(autorId: string, instante: string): void {
-    const atual = this.tarefaAtual(autorId);
-    if (!atual) return;
-    const y = this.denominadorDe(autorId).length;
+  private guardarPapel(linha: TarefaLinha, instante: string): void {
+    const y = this.denominadorDe(linha.autorId).length;
     this.banco
       .update(tarefa)
       .set({
@@ -290,8 +288,23 @@ export class Produto {
         denominadorCongelado: y,
         atualizadoEm: instante,
       })
-      .where(eq(tarefa.id, atual.id))
+      .where(eq(tarefa.id, linha.id))
       .run();
+  }
+
+  private guardarAtual(autorId: string, instante: string): void {
+    const atual = this.tarefaAtual(autorId);
+    if (!atual) return;
+    this.guardarPapel(atual, instante);
+  }
+
+  tirarDaParede(atorId: string, tarefaId: string): void {
+    const ator = this.buscarUsuario(atorId);
+    const alvo = this.banco.select().from(tarefa).where(eq(tarefa.id, tarefaId)).get();
+    if (!alvo || alvo.naParede !== 1) throw new ErroDeRegra("nao-encontrado", "Tarefa atual não encontrada.");
+    const pode = ator.papel === "admin" || alvo.autorId === atorId;
+    if (!pode) throw new ErroDeRegra("nao-autorizado", "Sem permissão para tirar da parede.");
+    this.guardarPapel(alvo, agoraIso(this.instante()));
   }
 
   private vincularCategorias(tarefaId: string, categoriaIds: string[]): void {

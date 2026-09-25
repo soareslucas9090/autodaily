@@ -65,7 +65,8 @@ export const api = {
     pedir<Mural>("/api/mural/publicar", { method: "POST", body: JSON.stringify(corpo) }),
   editar: (corpo: { descricao?: string; idTrello?: string | null; categoriaIds?: string[] }) =>
     pedir<Mural>("/api/tarefa-atual", { method: "PATCH", body: JSON.stringify(corpo) }),
-  excluir: (id: string) => pedir<Mural>(`/api/tarefas/${id}`, { method: "DELETE" }),
+  guardar: (id: string) => pedir<Mural>(`/api/tarefas/${id}/guardar`, { method: "POST" }),
+  excluir: (id: string) => pedir<{ ok: boolean } | Mural>(`/api/tarefas/${id}`, { method: "DELETE" }),
   retornar: () => pedir<Mural>("/api/retornar-anterior", { method: "POST" }),
   marcar: (id: string) => pedir<Mural>(`/api/tarefas/${id}/ciencia`, { method: "POST" }),
   desmarcar: (id: string) => pedir<Mural>(`/api/tarefas/${id}/ciencia`, { method: "DELETE" }),

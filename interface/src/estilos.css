@@ -10,6 +10,7 @@
   --sombra: 0 6px 8px rgb(42 42 42 / 12%);
   --curva: cubic-bezier(0.16, 1, 0.3, 1);
   --duracao: 200ms;
+  --postit-legenda: #111111;
   color-scheme: light;
   font-family: "Source Serif 4", "Palatino Linotype", Palatino, serif;
   color: var(--tinta);
@@ -25,6 +26,7 @@
   --caneta: #c5d4e8;
   --aviso: #e2b4b4;
   --sombra: 0 6px 8px rgb(0 0 0 / 28%);
+  --postit-legenda: #f0f0ed;
   color-scheme: dark;
 }
 
@@ -155,12 +157,22 @@ button.icone.caneta { color: var(--caneta); }
   transition: background-color var(--duracao) var(--curva), filter var(--duracao) var(--curva), transform var(--duracao) var(--curva);
 }
 
+.folha.post-it .nome,
 .folha.post-it .rotulo,
 .folha.post-it .meta,
 .folha.post-it .acao,
 .folha.post-it .alfinete,
 .folha.post-it .categorias-escolha {
-  color: color-mix(in srgb, var(--postit, var(--papel)) 12%, #141414);
+  color: var(--postit-legenda);
+  transition: color var(--duracao) var(--curva);
+}
+
+.folha.post-it .progresso em {
+  color: var(--postit-legenda);
+}
+
+.folha.post-it .acao:hover {
+  opacity: 0.82;
 }
 
 .folha.post-it::after {
@@ -223,7 +235,15 @@ button.icone.caneta { color: var(--caneta); }
   background: transparent;
 }
 
-.nome { margin: 0 0 0.35rem; font-size: 1rem; }
+.nome {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--tinta);
+  transition: color var(--duracao) var(--curva);
+}
 
 .rotulo, .meta {
   margin: 0 0 0.45rem;
@@ -445,14 +465,14 @@ button.icone.caneta { color: var(--caneta); }
   flex: none;
   display: grid;
   place-items: center;
-  border: 1.5px solid color-mix(in srgb, var(--postit, var(--papel)) 12%, #141414);
+  border: 1.5px solid var(--postit-legenda);
   background: transparent;
   cursor: pointer;
   transition: background-color var(--duracao) var(--curva), border-color var(--duracao) var(--curva);
 }
 
 .categorias-escolha input:checked {
-  background: color-mix(in srgb, var(--postit, var(--papel)) 12%, #141414);
+  background: var(--postit-legenda);
   border-color: transparent;
 }
 
@@ -466,7 +486,7 @@ button.icone.caneta { color: var(--caneta); }
 }
 
 .categorias-escolha input:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--postit, var(--papel)) 12%, #141414);
+  outline: 2px solid var(--postit-legenda);
   outline-offset: 3px;
 }
 
