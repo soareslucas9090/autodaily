@@ -1,7 +1,7 @@
 ---
 id: ESP-01
-status: rascunho
-atualizado: 2026-09-24
+status: fechada
+atualizado: 2026-09-25
 ---
 
 # Mural e tarefa atual
@@ -16,7 +16,7 @@ atualizado: 2026-09-24
 
 ## RF-002 Uma tarefa atual por programador
 
-No máximo uma tarefa atual por programador. Editar a atual no lugar não cria segunda atual nem arquiva. Só publicar outra tarefa substitui e arquiva a que estava na parede.
+No máximo uma tarefa atual por programador. Corrigir a atual no lugar — texto, id do Trello ou categorias — não cria segunda atual nem arquiva. Só publicar outra tarefa substitui e arquiva a que estava na parede.
 
 ## RF-003 Publicar substitui e arquiva
 
@@ -45,9 +45,25 @@ Se houver categorias, a face mostra a **primeira em ordem alfabética**. Se houv
 
 ## RF-017 Edição no lugar
 
-**Regra:** o programador dono do card pode editar texto, id do Trello ou categorias da tarefa atual sem arquivar a atual nem criar outra tarefa atual.
+**Regra:** o programador dono do card pode editar descrição, id do Trello ou categorias da tarefa atual sem arquivar a atual nem criar outra tarefa atual.
 
-**Critério de aceite:** Dado o programador dono com tarefa atual na parede, **quando** edita descrição, id do Trello ou categorias, **então** continua existindo uma única tarefa atual para ele, o card reflete a alteração e nenhuma tarefa nova é arquivada por causa da edição.
+**Visualização padrão:** leitura. Os campos **não** ficam abertos.
+
+**Gesto:** o dono clica na região que quer editar (texto da descrição, id do Trello, rótulo de categoria). Só então aparece o cursor naquele texto.
+
+**Ao digitar:** as letras saem na **mesma fonte, tamanho e cor** do card em repouso. Proibido caixa de texto clássica (retângulo branco, borda de input, chrome de formulário que desto do papel). Categoria, se precisar de escolha, aparece como parte do papel, não como dropdown branco clássico.
+
+**Salvamento ao vivo:** o que está escrito é o que fica gravado, sem botão salvar e sem passo de confirmação. A gravação não pisca nem troca o visual para “modo formulário”. Se a gravação falhar, o texto digitado **não** some em silêncio: há aviso contido, no mesmo tom do mural.
+
+**Quem não é dono:** vê só leitura e não abre cursor no card alheio.
+
+**Descrição vazia:** inválida. Não gravar vazio como se fosse publicação válida; se o texto ficar vazio, a gravação dessa alteração **não** é aceita e o aviso é contido.
+
+**Critério de aceite:** Dado o programador dono com tarefa atual na parede, **quando** edita descrição, id do Trello ou categorias pelo gesto acima, **então** continua existindo uma única tarefa atual para ele, o card reflete a alteração persistida, nenhuma tarefa nova é arquivada por causa da edição, e o card permanece em modo leitura fora das regiões em edição.
+
+**Critério de aceite:** Dado programador dono, **quando** tenta deixar a descrição vazia na edição, **então** a alteração não é aceita e há aviso contido.
+
+**Critério de aceite:** Dado programador que não é dono, **quando** interage com card alheio, **então** não obtém cursor de edição nem altera o conteúdo.
 
 ## RF-018 Exclusão da atual
 

@@ -1,7 +1,7 @@
 ---
 id: QA-INDEX
 status: vigente
-atualizado: 2026-09-24
+atualizado: 2026-09-25
 ---
 
 # Questões em aberto
@@ -27,18 +27,27 @@ Nada nesta lista é requisito. Uma resposta futura promove o item a regra numa s
 - **QA-015** — Relatório completo pela data de publicação: quebra por id do Trello, duração, média e ciência. Categoria só é exibida, sem recorte.
 - **QA-016** — Relatório simples com quantidades quebradas por programador e por dia, pela data de publicação; cada publicação conta como tarefa.
 - **QA-017** — Qualquer usuário autenticado emite relatório.
-- **QA-018** — Primeiro admin por `createsuperuser`; demais membros pela tela do produto.
+- **QA-018** — Primeiro admin por **comando de linha do produto**; demais membros pela tela do produto.
 - **QA-019** — Admin edita membro; desativa e reativa; sem exclusão de membro. Desativado não entra no programa.
 - **QA-020** — Senha com no mínimo 6 caracteres, de qualquer tipo; sem recuperação; admin redefine senha de qualquer um.
-- **QA-021** — Cadastro e gestão de membros na tela do produto; `createsuperuser` só para o primeiro admin.
+- **QA-021** — Cadastro e gestão de membros na tela do produto; comando de linha do produto só para o primeiro admin.
 - **QA-022** — Tema padrão claro; preferência de tema só no navegador; caneta continua por usuário.
-- **QA-023** — Dois temas jornal; escuro confortável, não preto.
+- **QA-023** — Dois temas de **papel cinza neutro**; escuro confortável, **não** preto puro nem amarelado.
 - **QA-024** — Caneta azul ou preta por usuário; controle na barra superior ao lado do tema.
 - **QA-025** — Insígnia continua o sinal sóbrio no canto superior direito quando x = y; sem símbolo adicional.
 - **QA-026** — Models básicos: somente data de criação e data de atualização.
-- **QA-027** — Model Usuario próprio; não o User padrão do Django como domínio.
-- **QA-028** — SQLite agora; PostgreSQL no futuro; o mesmo modelo serve aos dois.
+- **QA-027** — **Usuario** conta própria do produto; não usuário genérico de framework.
+- **QA-028** — **SQLite** em arquivo local agora; **PostgreSQL** depois; o **mesmo schema** serve aos dois (Drizzle).
 - **QA-029** — Ao excluir a atual, o card fica em branco; a tarefa anterior só volta se o programador pedir. Ao voltar, o time é o de agora e permanecem as ciências de quem ainda está ativo.
+
+## Resolvidas em 2026-09-25
+
+- **QA-030** — TypeScript no produto; interface React; servidor Hono; persistência Drizzle; SQLite em arquivo local agora e PostgreSQL depois.
+- **QA-031** — Papel cinza neutro com fibra de papel; proibido amarelo, marfim, sépia e visual de site de jornal antigo.
+- **QA-032** — Transição suave em todo o sistema; nada brusco nem instantâneo.
+- **QA-033** — Card em leitura; edição só ao clicar na região; cursor no texto; mesma fonte; sem caixa branca; gravação ao vivo sem botão salvar.
+- **QA-034** — Interface inteira pela skill Impeccable; catálogo em `docs/07-skill-impeccable/README.md`; linguagem visual vence conflito com a skill.
+- **QA-035** — Implementação pelo Grok 4.7 extra high com contexto de 500 mil tokens; Composer 2.5 só para iterar arquivos e código.
 
 ## Perguntas abertas
 

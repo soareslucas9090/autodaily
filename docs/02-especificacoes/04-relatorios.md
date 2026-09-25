@@ -1,6 +1,6 @@
 ---
 id: ESP-04
-status: rascunho
+status: fechada
 atualizado: 2026-09-24
 ---
 

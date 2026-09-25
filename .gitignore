@@ -19,6 +19,8 @@ media/
 
 # Node
 node_modules/
+servidor/dados/
+interface/dist/
 
 # Testes e qualidade
 .pytest_cache/

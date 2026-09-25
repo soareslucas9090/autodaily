@@ -1,7 +1,7 @@
 ---
 id: DOM-01
-status: rascunho
-atualizado: 2026-09-24
+status: fechada
+atualizado: 2026-09-25
 ---
 
 # Glossário e modelo conceitual
@@ -12,9 +12,9 @@ atualizado: 2026-09-24
 
 | Termo | Definição |
 | --- | --- |
-| **Usuario** | Conta de acesso ao produto (model próprio, não o User padrão do Django). Carrega username, senha e papel (admin ou programador). |
+| **Usuario** | Conta de acesso ao produto (conta própria do AutoDaily, não usuário genérico de framework). Carrega username, senha e papel (admin ou programador). |
 | **Programador** | Papel de membro ativo que publica a própria tarefa, edita o próprio card, marca e desmarca ciência nas tarefas dos outros. **Desativado:** não entra no programa (login recusado), não aparece no mural, não marca ciência e não entra no time de agora. |
-| **Admin** | Papel disjunto de programador. Registra e edita membros, desativa e reativa, redefine senha, cadastra e exclui categorias, exclui qualquer tarefa. Sem card no mural e sem ciência. Primeiro admin nasce por `createsuperuser`. |
+| **Admin** | Papel disjunto de programador. Registra e edita membros, desativa e reativa, redefine senha, cadastra e exclui categorias, exclui qualquer tarefa. Sem card no mural e sem ciência. Primeiro admin nasce por **comando de linha do produto**. |
 | **Tarefa atual** | A que o card mostra na parede. |
 | **Tarefa anterior / histórico** | Papel guardado quando um novo foi publicado ou quando deixou de ser o exibido no card. Conserva dados; tarefa guardada congela ciência e denominador ao sair da parede. |
 | **Exclusão definitiva** | Tarefa removida de verdade: some do histórico e dos relatórios; não é desativação; não volta. |
@@ -53,4 +53,4 @@ erDiagram
     Tarefa ||--o{ Ciencia : recebe
 ```
 
-Este diagrama é **conceitual**. Não é schema de banco, não é migration e **não autoriza** model Django nesta fase. **Admin** e **Programador** são papéis disjuntos do **Usuario**, não entidades separadas obrigatórias no schema futuro.
+Este diagrama é **conceitual**. Não é schema de banco nem migration. **Não autoriza** model de framework nem schema SQL como substituto do domínio descrito aqui. **Admin** e **Programador** são papéis disjuntos do **Usuario**, não entidades separadas obrigatórias no schema futuro.

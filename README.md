@@ -8,21 +8,21 @@ A especificação detalhada (SDD) está em [docs/README.md](docs/README.md).
 
 ## Desenvolvimento
 
-Projeto Django. Na raiz do repositório:
+A **spec vigente** está em [docs/README.md](docs/README.md). A árvore **Django** ainda presente no repositório é a implementação **rejeitada** e **não** é o caminho de desenvolvimento.
+
+O alvo é **TypeScript**, interface **React** em `interface/`, servidor **Hono** e persistência **Drizzle** com **SQLite** em `servidor/dados/autodaily.sqlite`.
 
 ```bash
-python manage.py migrate
-python manage.py runserver
+cd servidor
+npm install
+npm run criar-admin -- <username> <senha>
+npm run dev
 ```
-
-O primeiro administrador nasce com `python manage.py createsuperuser`. Os outros membros são cadastrados na tela do produto.
-
-### Estilos e Tailwind
-
-O visual atual usa **CSS no template base**, não um build Tailwind no repositório. HTMX está em uso. Para compilar Tailwind no futuro, `STATIC_ROOT` e o passo a passo estão em [docs/04-arquitetura/frontend-estilos-e-tailwind.md](docs/04-arquitetura/frontend-estilos-e-tailwind.md).
-
-Em produção, após haver arquivos em `static/`:
 
 ```bash
-python manage.py collectstatic
+cd interface
+npm install
+npm run dev
 ```
+
+A interface sobe em `http://localhost:5173` e fala com a API em `http://localhost:3001`. O primeiro admin nasce só por esse comando; os demais membros, pela tela do produto.

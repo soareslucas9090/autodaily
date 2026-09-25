@@ -1,20 +1,22 @@
 ---
 id: EXP-01
-status: rascunho
-atualizado: 2026-09-24
+status: fechada
+atualizado: 2026-09-25
 ---
 
 # Linguagem visual
 
-Isto é **restrição de produto**, não moodboard. Implementação futura que violar estas regras está errada mesmo que “funcione”.
+Isto é **restrição de produto**, não moodboard. Implementação que violar estas regras está errada mesmo que “funcione”.
 
 ## Metáfora
 
-Parede de uma redação / daily físico. Cards são papéis ou post-its colados. Publicar é descolar um papel e colar outro. Ciência é alfinete físico no papel, não um checkbox de formulário genérico. A função continua sendo marcação individual (ver ESP-02); a apresentação é o pino.
+Parede de redação, papel, caneta, alfinete. Cards são papéis colados. Publicar descola um papel e cola outro. Ciência é alfinete no papel, não checkbox de formulário genérico. A função continua sendo marcação individual (ver ESP-02); a apresentação é o pino.
 
 ## Tom
 
-Moderno, contido, sem exagero. Clássico de editorial dos anos 90 misturado ao objeto físico. Não é paródia, não é skeuomorfismo carregado.
+Material **papel de jornal**: folha acinzentada, fibra visível, leitura de objeto físico. Moderno e contido, sem exagero. **Não** é site de jornal antigo, editorial amarelado, sépia, marfim, creme, papel envelhecido, masthead, fio de coluna como decoração, nem scan amarelado.
+
+**Proibido** o resultado da implementação rejeitada: visual de jornal antigo, editorial amarelado, sépia, marfim, creme, papel envelhecido e equivalentes (incluindo marfim `#e6e0d4` e tons quentes de “papel envelhecido”).
 
 ## RV-001 Responsivo
 
@@ -22,46 +24,46 @@ Utilizável em tela estreita, tablet e desktop. Mural empilha quando não cabe l
 
 ## RV-002 Temas
 
-Existem **dois** visuais de jornal: tema claro e tema escuro. Ambos lembram jornal. O escuro é mais confortável aos olhos, **não** é preto; as cores do escuro ainda remetem a jornal.
+Dois temas: **claro** (padrão) e **escuro**. Cromia do papel e da parede: **cinza neutro**. Sem puxar para o amarelo. Sem tom quente. Sem marfim. O escuro é cinza neutro mais escuro, confortável, **não** preto puro, e também **não** marrom nem quente.
 
-**Padrão do sistema:** tema **claro**.
-
-Quando o usuário troca o esquema de cor, a preferência fica **somente no navegador** (armazenamento local). Não grava no servidor. Outro navegador ou outro computador começa no tema claro.
+Preferência de tema fica **somente no navegador** (armazenamento local). Não grava no servidor. Outro navegador ou outro computador começa no tema claro.
 
 A preferência de caneta azul ou preta continua **por usuário** no servidor; não usa o mesmo mecanismo de localStorage do tema.
 
-**QA-023** foi respondida por esta regra (dois temas jornal; escuro confortável e não preto). **QA-022** fechada: padrão claro; persistência de tema só no navegador.
+**QA-023** fechada por esta regra (dois temas de papel cinza neutro; escuro confortável, não preto nem amarelado). **QA-022** fechada: padrão claro; persistência de tema só no navegador.
 
 ## RV-003 Proibições de cor e de estilo (requisito)
 
 Proibido na cromia de interface:
 
 - roxo, violeta, magenta e gradiente roxo
-- o azul clássico de área de tecnologia (azul de link SaaS, azul Tailwind padrão, azul de botão primário de dashboard)
+- o azul clássico de área de tecnologia (azul de link SaaS, azul de botão primário de dashboard)
 - verde limão, verde neon, verde “sucesso” claro de dashboard
 - glassmorphism, glow, neon, malha de gradiente, visual genérico de painel SaaS
 
 **Exceção única de azul:** a tinta da escrita de dentro do card, que é azul de caneta esferográfica, não azul de UI. Esse azul não colore botão, link, fundo nem barra.
 
+A skill Impeccable orienta a não usar cinza puro e a tingir cores. **Esta spec vence:** tingimento quente ou amarelo é proibido. **Cinza neutro** é a regra. Um fio frio é aceitável; amarelo, creme e sépia não.
+
 ## RV-004 Papel e parede
 
-A regra de cromia e metáfora é a de **RV-002**: jornal nos dois temas; escuro confortável, não preto, ainda com leitura de jornal. Não há proposta pendente de “parede cinza-carvão com card marfim” como decisão separada.
+Papel e parede em **cinza neutro** nos dois temas, com leitura de folha de jornal (fibra visível, ver RV-011). Proibido marfim, sépia, creme e amarelo de editorial.
 
 ## RV-005 Tipografia de interface
 
-Lembra jornal antigo. Serifas moderadas. Tem de ser confortável de ler.
+Serifa moderada, confortável. **Não** é “jornal antigo” nem site editorial.
 
-**Proibido:** serifa de contraste extremo (Didot/Bodoni) em texto corrido, blackletter, script na cromia da interface (menus, filtros, relatórios).
+**Proibido:** Didot/Bodoni em texto corrido, blackletter, script em menus, filtros e relatórios.
 
-Famílias concretas são **proposta**, não decisão: Newsreader ou Source Serif 4.
+Famílias concretas são **proposta**, não decisão fechada.
 
 ## RV-006 Tipografia do card
 
-A descrição dentro do card parece escrita à mão e continua bem clara.
+A descrição parece escrita à mão e continua bem clara.
 
 **Proibido:** caligrafia ilegível, “letra de médico”, script conectado denso.
 
-**Proposta** de família, não fechada: Kalam ou Patrick Hand.
+Família continua **proposta**, não fechada.
 
 ## RV-007 Tinta da descrição
 
@@ -73,37 +75,41 @@ Preferência **por usuário**. Na barra superior, controle com ícone de caneta 
 
 ## RV-008 Barra
 
-Verde acima do card, na barra de progresso. Não pode ser agressivo. Preferir um verde mais escuro, que case com a paleta sóbria. Não usar o verde como cor de marca do sistema inteiro; ele é a barra.
+Verde escuro sóbrio acima do card, na barra de progresso. Não agressivo. Não usar o verde como cor de marca do sistema inteiro; ele é a barra.
 
-Além do verde sóbrio, o **miolo** da barra mostra **x/y** em texto pequeno (x = marcações, y = total que deve marcar; ver ESP-02).
+O **miolo** da barra mostra **x/y** em texto pequeno (x = marcações, y = total que deve marcar; ver ESP-02).
 
 ## RV-009 Insígnia
 
-Canto superior direito quando a ciência está completa (x = y). Sóbria. Sem medalha de jogo, sem confete, sem brilho. Forma além de cor, para não depender só da cor. **QA-025** fechada: não há símbolo adicional além deste sinal sóbrio no canto superior direito quando x = y; não inventar ilustração extra.
+Canto superior direito quando a ciência está completa (x = y). Sóbria. Sem medalha de jogo, sem confete, sem brilho. Forma além de cor. **QA-025** fechada: não há símbolo adicional além deste sinal quando x = y.
 
 ## RV-010 Movimento
 
-Se houver movimento de trocar o papel, é curto e pequeno.
+**Nada no sistema é brusco ou instantâneo.** Troca de tema, troca de tela, abrir edição, publicar ou trocar papel, filtros, paginação, aparecer e sumir de região: transição contínua, curta o bastante para não atrasar, longa o bastante para o olho acompanhar.
 
-**Proibido:** bounce, parallax, confete.
+**Proibido:** corte instantâneo, bounce, parallax, confete.
 
 ## RV-011 Contenção do objeto físico
 
-Alfinete, papel e tipografia carregam a metáfora.
+Alfinete, papel e tipografia carregam a metáfora. Textura: **fibra de papel**, o bastante para a folha parecer papel.
 
-**Proibido:** clipart, pino 3D, textura de papel barulhenta, borda rasgada em tudo, sombra empilhada, emoji no lugar do alfinete.
+**Proibido:** textura barulhenta, borda rasgada em tudo, clipart, pino 3D, sombra empilhada, emoji no lugar do alfinete.
 
-## Paleta proposta
+## RV-012 Edição invisível
 
-**PROPOSTA ilustrativa**, não token fechado. Deve obedecer jornal nos dois temas, escuro confortável e não preto. Valores ilustrativos:
+Na leitura, os campos **não** ficam abertos como formulário. Ao editar (dono, na tarefa atual), o cursor aparece **no texto** da região clicada; ao digitar, mesma fonte, tamanho e cor do card em repouso. **Proibido** retângulo branco, borda de input e chrome de formulário que destoem do papel. Quem não é dono não abre cursor no card alheio. Regras de gravação e descrição vazia: ESP-01 **RF-017**.
 
-| Uso | Direção | Exemplo |
-| --- | --- | --- |
-| Parede escura | Cinza quente muito escuro (jornal à noite, não preto) | `#1c1b19` |
-| Papel | Marfim | `#e6e0d4` |
-| Tinta de interface no escuro | Cinza claro quente | (sem hex fechado nesta rodada) |
-| Caneta azul | Azul de esferográfica, fora da família de azul de botão tech | `#1e3a5f` |
-| Caneta preta | Quase preto | — |
-| Progresso | Verde escuro sóbrio | `#2f5d45` |
+## Paleta (direção fechada)
 
-O tema claro usa parede em cinza-papel claro e o mesmo verde e a mesma caneta, sem inverter para paleta SaaS.
+Valores **ilustrativos**; substituíveis desde que permaneçam **cinza neutro** (sem amarelo, marfim ou sépia).
+
+| Uso | Exemplo ilustrativo |
+| --- | --- |
+| Papel claro | `#d4d4d1` |
+| Parede clara | `#b9b9b6` |
+| Papel escuro | `#3a3a3a` |
+| Parede escura | `#2a2a2a` |
+| Tinta de interface | cinza neutro escuro no tema claro; cinza neutro claro no tema escuro |
+| Caneta azul | `#1e3a5f` |
+| Caneta preta | quase preto (sem preto puro no tema escuro como fundo de parede) |
+| Progresso | `#2f5d45` |

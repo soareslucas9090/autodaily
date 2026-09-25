@@ -1,7 +1,7 @@
 ---
 id: ESP-05
-status: rascunho
-atualizado: 2026-09-24
+status: fechada
+atualizado: 2026-09-25
 ---
 
 # Membros e acesso
@@ -16,13 +16,13 @@ A senha deve ter **no mínimo 6 caracteres**. Vale letra, número ou qualquer ou
 
 Dois papéis **disjuntos**: **admin** e **programador**. Admin **não** é programador.
 
-Somente o admin registra novos membros (pela **tela do produto**). Somente o admin cadastra e exclui categorias (detalhe em ESP-06). Cadastro e gestão de membros **não** usam o Django admin como interface do produto.
+Somente o admin registra novos membros (pela **tela do produto**). Somente o admin cadastra e exclui categorias (detalhe em ESP-06). Cadastro e gestão de membros **não** usam painel de administração de framework.
 
-**Primeiro admin:** nasce por `createsuperuser`. Os demais membros nascem pela tela do produto.
+**Primeiro admin:** nasce por **comando de linha do próprio produto**. Os demais membros nascem pela tela do produto. Não há `createsuperuser` nem Django admin como alvo.
 
 **Admin:** registra e edita membros; desativa e reativa membros; redefine senha; cadastra e exclui categorias; exclui qualquer tarefa (atual ou histórico) de qualquer programador. **Não** tem card no mural, **não** publica tarefa, **não** marca nem desmarca ciência.
 
-**Programador:** publica a própria tarefa; edita o próprio card (tarefa atual); marca e desmarca a **própria** ciência nos cards dos outros; exclui as **próprias** tarefas. **Não** registra membro; **não** cadastra nem exclui categoria; **não** edita texto de card alheio; **não** exclui tarefa de outro.
+**Programador:** publica a própria tarefa; edita o próprio card (tarefa atual), clicando na região do texto a corrigir, conforme ESP-01; marca e desmarca a **própria** ciência nos cards dos outros; exclui as **próprias** tarefas. **Não** registra membro; **não** cadastra nem exclui categoria; **não** edita texto de card alheio; **não** exclui tarefa de outro.
 
 **Membro no fluxo normal:** não é **excluído**; é **desativado**. O admin pode voltar a **ativar**. Não há exclusão de membro.
 

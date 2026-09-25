@@ -1,0 +1,297 @@
+:root {
+  --parede: #b9b9b6;
+  --papel: #d4d4d1;
+  --tinta: #2a2a2a;
+  --tinta-suave: #3f3f3d;
+  --fio: #8e8e8b;
+  --progresso: #2f5d45;
+  --caneta: #1e3a5f;
+  --aviso: #6b2e2e;
+  --sombra: 0 6px 8px rgb(42 42 42 / 12%);
+  --curva: cubic-bezier(0.16, 1, 0.3, 1);
+  --duracao: 200ms;
+  color-scheme: light;
+  font-family: "Source Serif 4", "Palatino Linotype", Palatino, serif;
+  color: var(--tinta);
+  background: var(--parede);
+}
+
+:root[data-tema="escuro"] {
+  --parede: #2a2a2a;
+  --papel: #3a3a3a;
+  --tinta: #d4d4d1;
+  --tinta-suave: #b9b9b6;
+  --fio: #6a6a68;
+  --caneta: #c5d4e8;
+  --aviso: #e2b4b4;
+  --sombra: 0 6px 8px rgb(0 0 0 / 28%);
+  color-scheme: dark;
+}
+
+:root[data-caneta="preta"] {
+  --caneta: #1a1a1a;
+}
+
+:root[data-tema="escuro"][data-caneta="preta"] {
+  --caneta: #ececec;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { min-height: 100%; }
+
+body {
+  margin: 0;
+  background-color: var(--parede);
+  background-image:
+    radial-gradient(rgb(90 90 88 / 7%) 0.6px, transparent 0.7px),
+    radial-gradient(rgb(255 255 255 / 16%) 0.5px, transparent 0.6px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1px 2px;
+  transition: background-color var(--duracao) var(--curva), color var(--duracao) var(--curva);
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  color: inherit;
+}
+
+.casca {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  padding: 0.85rem 1.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--parede) 92%, transparent);
+  transition: background-color var(--duracao) var(--curva);
+}
+
+.marca {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-right: auto;
+}
+
+.nav { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; }
+
+.nav button, .acao, .icone {
+  background: transparent;
+  border: 0;
+  padding: 0.35rem 0.15rem;
+  color: var(--tinta-suave);
+  transition: color var(--duracao) var(--curva), opacity var(--duracao) var(--curva);
+}
+
+.nav button[aria-current="page"], .nav button:hover, .acao:hover, .icone:hover {
+  color: var(--tinta);
+}
+
+.miolo {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto 3rem;
+  animation: surgir var(--duracao) var(--curva);
+}
+
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.mural {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.folha {
+  background: var(--papel);
+  color: var(--tinta);
+  box-shadow: var(--sombra);
+  padding: 1rem 1.05rem 1.15rem;
+  position: relative;
+  transition: background-color var(--duracao) var(--curva), box-shadow var(--duracao) var(--curva), transform var(--duracao) var(--curva);
+}
+
+.folha:hover { transform: translateY(-2px); }
+
+.progresso {
+  height: 1.35rem;
+  background: color-mix(in srgb, var(--progresso) 18%, var(--papel));
+  margin: -1rem -1.05rem 0.85rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.progresso span.enchimento {
+  display: block;
+  height: 100%;
+  background: var(--progresso);
+  width: 0;
+  transition: width 240ms var(--curva);
+}
+
+.progresso em {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  font-size: 0.75rem;
+  color: var(--tinta);
+}
+
+.insignia {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1.5px solid var(--tinta);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.nome { margin: 0 0 0.35rem; font-size: 1rem; }
+
+.rotulo, .meta {
+  margin: 0 0 0.45rem;
+  font-size: 0.92rem;
+  color: var(--tinta-suave);
+  padding: 0;
+  text-align: left;
+}
+
+.escrita, .linha {
+  font-family: "Kalam", "Segoe Print", cursive;
+  font-size: 1.2rem;
+  line-height: 1.45;
+  color: var(--caneta);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  width: 100%;
+  min-height: 1.45em;
+  padding: 0.15rem 0;
+  outline: none;
+  resize: none;
+  transition: color var(--duracao) var(--curva), border-color var(--duracao) var(--curva);
+}
+
+.linha { border-bottom-color: var(--fio); }
+
+.escrita[contenteditable="true"]:focus, .linha:focus {
+  border-bottom-color: var(--tinta);
+  box-shadow: none;
+}
+
+.escrita.sem-texto:not(:focus)::before {
+  content: attr(data-placeholder);
+  color: var(--tinta-suave);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.linha::placeholder {
+  color: var(--tinta-suave);
+  opacity: 0.85;
+}
+
+.ciencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.7rem;
+  margin-top: 0.85rem;
+  padding: 0;
+  list-style: none;
+}
+
+.alfinete {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: 0;
+  padding: 0.35rem 0;
+  color: var(--tinta-suave);
+  min-height: 2.25rem;
+}
+
+.alfinete i {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--tinta);
+  display: inline-block;
+  transition: background-color var(--duracao) var(--curva), transform var(--duracao) var(--curva);
+}
+
+.alfinete[aria-pressed="true"] i { background: var(--tinta); transform: translateY(1px); }
+.alfinete:disabled { cursor: default; }
+
+.aviso {
+  color: var(--aviso);
+  font-size: 0.9rem;
+  min-height: 1.2em;
+}
+
+.entrar {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.entrar form, .painel {
+  width: min(28rem, 100%);
+}
+
+.campo { display: grid; gap: 0.2rem; margin-bottom: 0.8rem; }
+.campo span { font-size: 0.92rem; }
+
+.lista { display: grid; gap: 0.75rem; }
+.linha-membro, .filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: end;
+}
+
+.tabela { width: 100%; border-collapse: collapse; }
+.tabela th, .tabela td {
+  text-align: left;
+  padding: 0.45rem 0.35rem;
+  border-bottom: 1px solid var(--fio);
+  vertical-align: top;
+}
+
+.categorias-escolha {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.4rem;
+}
+
+.categorias-escolha label { display: flex; gap: 0.4rem; align-items: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

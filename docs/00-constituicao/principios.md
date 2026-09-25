@@ -1,7 +1,7 @@
 ---
 id: CONST
 status: vigente
-atualizado: 2026-09-24
+atualizado: 2026-09-25
 ---
 
 # Princípios
@@ -40,15 +40,15 @@ O dono da tarefa exclui as próprias tarefas, inclusive a atual. O admin pode ex
 
 ## 6. Mural de redação, não dashboard tech
 
-A interface é um mural físico de redação: jornal, papel, caneta, alfinete. Não é dashboard de produto de tecnologia.
+A interface é um mural físico de redação: **papel cinza de jornal** (o material), caneta e alfinete. Não é dashboard de produto de tecnologia.
 
-**Proíbe:** linguagem visual de painel SaaS genérico; priorizar métricas de produto sobre a metáfora do mural.
+**Proíbe:** linguagem visual de painel SaaS genérico; priorizar métricas de produto sobre a metáfora do mural; site de jornal antigo, sépia, marfim e amarelo de papel envelhecido.
 
 ## 7. Repetição é defeito
 
-Repetição de código é defeito. Views, models e mixins de base existem para serem herdados.
+Repetição é defeito. Um lugar único de bases reutilizáveis em TypeScript: dados transversais (somente datas de criação e atualização), autenticação, papel e dono do recurso, e componentes de interface reutilizados.
 
-**Proíbe:** copiar padrões transversais em cada app em vez de herdar bases comuns.
+**Proíbe:** copiar o mesmo padrão transversal em cada tela ou módulo em vez de reutilizar bases comuns.
 
 ## 8. Pergunta não é regra
 
@@ -58,6 +58,6 @@ O que ainda é pergunta não vira regra.
 
 ## 9. Código de domínio em português
 
-Nomes de domínio, campos, módulos e rótulos de código do AutoDaily ficam em português (por exemplo Usuario, Tarefa, Categoria, Ciencia). Vocabulário já estabelecido de programação e de framework não se traduz (View, Model, Mixin, Template, URL, QuerySet, nomes do Django, do Python, do Tailwind e do HTMX).
+Nomes de domínio, campos, módulos e rótulos de código do AutoDaily ficam em português (por exemplo Usuario, Tarefa, Categoria, Ciencia). Vocabulário já estabelecido de programação não se traduz: componente React, tipo, rota, schema Drizzle, nomes de TypeScript, React, Hono e Drizzle.
 
 **Proíbe:** nome de domínio em inglês no código do produto (Task, User, Category e equivalentes).
