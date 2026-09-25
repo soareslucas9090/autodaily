@@ -155,6 +155,28 @@ button.icone.caneta { color: var(--caneta); }
   transition: background-color var(--duracao) var(--curva), filter var(--duracao) var(--curva), transform var(--duracao) var(--curva);
 }
 
+.folha.post-it::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--dobra);
+  height: var(--dobra);
+  background:
+    linear-gradient(
+      135deg,
+      transparent calc(50% - 1px),
+      rgb(0 0 0 / 22%) 50%,
+      transparent calc(50% + 1px)
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--postit, var(--papel)) 78%, white) 49.5%,
+      transparent 50%
+    );
+  pointer-events: none;
+}
+
 .progresso {
   height: 1.35rem;
   background: color-mix(in srgb, var(--postit, var(--papel)) 70%, white);
