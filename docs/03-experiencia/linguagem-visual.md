@@ -69,15 +69,17 @@ Família continua **proposta**, não fechada.
 
 Padrão: azul de caneta esferográfica. Alternativa: caneta preta.
 
-Preferência **por usuário**. Na barra superior, controle com ícone de caneta **ao lado** do ícone que troca claro/escuro.
+Preferência **por usuário**. Na barra superior, o controle é um **ícone de caneta** pintado na tinta atual (azul ou preta), ao lado do controle de tema. O tema é um **sol** no claro e uma **lua** no escuro. Os nomes acessíveis continuam dizendo a caneta e o tema.
 
 **QA-024** fechada por esta regra.
 
 ## RV-008 Barra
 
-Verde escuro sóbrio acima do card, na barra de progresso. Não agressivo. Não usar o verde como cor de marca do sistema inteiro; ele é a barra.
+A barra de progresso usa a cor do post-it do card, não um verde de marca. O fundo da barra é essa cor **30% mais clara**. O enchimento, que mede o progresso, é a mesma cor **30% mais escura**. Sem post-it escolhido, a barra deriva do papel cinza.
 
 O **miolo** da barra mostra **x/y** em texto pequeno (x = marcações, y = total que deve marcar; ver ESP-02).
+
+O verde `#2f5d45` como cor da barra está **revogado**.
 
 ## RV-009 Insígnia
 
@@ -91,9 +93,11 @@ Canto superior direito quando a ciência está completa (x = y). Sóbria. Sem me
 
 ## RV-011 Contenção do objeto físico
 
-Alfinete, papel e tipografia carregam a metáfora. Textura: **fibra de papel**, o bastante para a folha parecer papel.
+Taxinha, papel e tipografia carregam a metáfora. A ciência é uma **taxinha** (ícone de fixar, cabeça e haste), grande o bastante para parecer colada no papel. A cabeça usa a cor de quem marcou (ESP-07). Textura: **fibra de papel**, o bastante para a folha parecer papel.
 
-**Proibido:** textura barulhenta, borda rasgada em tudo, clipart, pino 3D, sombra empilhada, emoji no lugar do alfinete.
+O canto **inferior direito** do card é dobrado, como a ponta de um post-it puxada e amassada, com vinco. O canto superior direito continua livre para a insígnia.
+
+**Proibido:** textura barulhenta, borda rasgada em tudo, clipart, pino 3D, sombra empilhada, emoji no lugar da taxinha.
 
 ## RV-012 Edição invisível
 
@@ -112,4 +116,5 @@ Valores **ilustrativos**; substituíveis desde que permaneçam **cinza neutro** 
 | Tinta de interface | cinza neutro escuro no tema claro; cinza neutro claro no tema escuro |
 | Caneta azul | `#1e3a5f` |
 | Caneta preta | quase preto (sem preto puro no tema escuro como fundo de parede) |
-| Progresso | `#2f5d45` |
+| Post-it | cor escolhida pelo programador (ESP-07); sem escolha, o papel cinza |
+| Progresso | fundo 30% mais claro que o post-it; enchimento 30% mais escuro |

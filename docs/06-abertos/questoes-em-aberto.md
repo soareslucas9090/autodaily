@@ -48,6 +48,7 @@ Nada nesta lista é requisito. Uma resposta futura promove o item a regra numa s
 - **QA-033** — Card em leitura; edição só ao clicar na região; cursor no texto; mesma fonte; sem caixa branca; gravação ao vivo sem botão salvar.
 - **QA-034** — Interface inteira pela skill Impeccable; catálogo em `docs/07-skill-impeccable/README.md`; linguagem visual vence conflito com a skill.
 - **QA-035** — Implementação pelo Grok 4.7 extra high com contexto de 500 mil tokens; Composer 2.5 só para iterar arquivos e código.
+- **QA-036** — Cor de post-it cadastrada pelo admin e escolhida pelo programador, exclusiva entre ativos; taxinha com a cor de quem marcou; barra derivada da cor do card.
 
 ## Perguntas abertas
 

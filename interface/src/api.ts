@@ -1,13 +1,16 @@
 export type Papel = "admin" | "programador";
 export type Caneta = "azul" | "preta";
 
-export type Eu = { id: string; username: string; papel: Papel; caneta: Caneta };
+export type Cor = { id: string; nome: string; hex: string };
+
+export type Eu = { id: string; username: string; papel: Papel; caneta: Caneta; cor: Cor | null };
 
 export type Ciencia = {
   usuarioId: string;
   username: string;
   marcada: boolean;
   acionavel: boolean;
+  cor: Cor | null;
 };
 
 export type TarefaCard = {
@@ -26,7 +29,7 @@ export type TarefaCard = {
 };
 
 export type Card = {
-  programador: { id: string; username: string };
+  programador: { id: string; username: string; cor: Cor | null };
   podeRetornar: boolean;
   tarefa: TarefaCard | null;
 };
@@ -78,6 +81,11 @@ export const api = {
   categorias: () => pedir<Categoria[]>("/api/categorias"),
   criarCategoria: (nome: string) => pedir<Categoria>("/api/categorias", { method: "POST", body: JSON.stringify({ nome }) }),
   excluirCategoria: (id: string) => pedir<Categoria[]>(`/api/categorias/${id}`, { method: "DELETE" }),
+  cores: () => pedir<(Cor & { ocupadaPor: string | null })[]>("/api/cores"),
+  criarCor: (nome: string, hex: string) =>
+    pedir<Cor>("/api/cores", { method: "POST", body: JSON.stringify({ nome, hex }) }),
+  excluirCor: (id: string) => pedir<(Cor & { ocupadaPor: string | null })[]>(`/api/cores/${id}`, { method: "DELETE" }),
+  escolherCor: (corId: string) => pedir<Eu>("/api/eu/cor", { method: "PATCH", body: JSON.stringify({ corId }) }),
   membros: () => pedir<{ id: string; username: string; papel: Papel; ativo: boolean }[]>("/api/membros"),
   criarMembro: (corpo: { username: string; senha: string; papel: Papel }) =>
     pedir("/api/membros", { method: "POST", body: JSON.stringify(corpo) }),

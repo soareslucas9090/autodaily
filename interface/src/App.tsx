@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { api, type Caneta, type Card, type Categoria, type Eu, type Mural, type Papel } from "./api";
+import pinSvg from "./assets/pushpin.svg?raw";
+import { api, type Caneta, type Card, type Categoria, type Cor, type Eu, type Mural, type Papel } from "./api";
 
-type Tela = "mural" | "historico" | "relatorios" | "membros" | "categorias";
+type Tela = "mural" | "historico" | "relatorios" | "membros" | "categorias" | "cores";
 
 function aplicarTema(tema: "claro" | "escuro") {
   document.documentElement.dataset.tema = tema;
@@ -14,12 +15,13 @@ function aplicarCaneta(caneta: Caneta) {
 
 export default function App() {
   const [eu, setEu] = useState<Eu | null | undefined>(undefined);
+  const [tema, setTema] = useState<"claro" | "escuro">(localStorage.getItem("tema") === "escuro" ? "escuro" : "claro");
   const [tela, setTela] = useState<Tela>("mural");
   const [mural, setMural] = useState<Mural | null>(null);
   const [aviso, setAviso] = useState("");
 
   useEffect(() => {
-    aplicarTema(localStorage.getItem("tema") === "escuro" ? "escuro" : "claro");
+    aplicarTema(tema);
     api.eu().then((pessoa) => {
       setEu(pessoa);
       aplicarCaneta(pessoa.caneta);
@@ -46,38 +48,45 @@ export default function App() {
             <>
               <button type="button" aria-current={tela === "membros" ? "page" : undefined} onClick={() => setTela("membros")}>Membros</button>
               <button type="button" aria-current={tela === "categorias" ? "page" : undefined} onClick={() => setTela("categorias")}>Categorias</button>
+              <button type="button" aria-current={tela === "cores" ? "page" : undefined} onClick={() => setTela("cores")}>Cores</button>
             </>
           )}
         </nav>
         <button
           type="button"
-          className="icone"
+          className="icone caneta"
           aria-label={eu.caneta === "azul" ? "Caneta azul" : "Caneta preta"}
           onClick={() => {
             const proxima: Caneta = eu.caneta === "azul" ? "preta" : "azul";
             api.caneta(proxima).then((pessoa) => { setEu(pessoa); aplicarCaneta(pessoa.caneta); });
           }}
         >
-          {eu.caneta === "azul" ? "Caneta azul" : "Caneta preta"}
+          <IconeCaneta />
         </button>
         <button
           type="button"
           className="icone"
-          onClick={() => aplicarTema(document.documentElement.dataset.tema === "escuro" ? "claro" : "escuro")}
+          aria-label={tema === "escuro" ? "Tema escuro" : "Tema claro"}
+          onClick={() => {
+            const proximo = tema === "escuro" ? "claro" : "escuro";
+            setTema(proximo);
+            aplicarTema(proximo);
+          }}
         >
-          Tema
+          <IconeTema escuro={tema === "escuro"} />
         </button>
         <button type="button" className="icone" onClick={() => api.sair().then(() => setEu(null))}>Sair</button>
       </header>
       <main className="miolo" key={tela}>
         {aviso && <p className="aviso">{aviso}</p>}
         {tela === "mural" && mural && (
-          <MuralTela mural={mural} eu={eu} aoMudar={setMural} aoAvisar={setAviso} />
+          <MuralTela mural={mural} eu={eu} aoMudar={setMural} aoAvisar={setAviso} aoEu={setEu} />
         )}
         {tela === "historico" && <Historico eu={eu} />}
         {tela === "relatorios" && <Relatorios />}
         {tela === "membros" && eu.papel === "admin" && <Membros />}
         {tela === "categorias" && eu.papel === "admin" && <Categorias />}
+        {tela === "cores" && eu.papel === "admin" && <Cores />}
       </main>
     </div>
   );
@@ -117,16 +126,18 @@ function MuralTela({
   eu,
   aoMudar,
   aoAvisar,
+  aoEu,
 }: {
   mural: Mural;
   eu: Eu;
   aoMudar: (mural: Mural) => void;
   aoAvisar: (texto: string) => void;
+  aoEu: (eu: Eu) => void;
 }) {
   return (
     <section className="mural" aria-label="Mural">
       {mural.cards.map((card) => (
-        <CardFolha key={card.programador.id} card={card} eu={eu} aoMudar={aoMudar} aoAvisar={aoAvisar} />
+        <CardFolha key={card.programador.id} card={card} eu={eu} aoMudar={aoMudar} aoAvisar={aoAvisar} aoEu={aoEu} />
       ))}
     </section>
   );
@@ -137,11 +148,13 @@ function CardFolha({
   eu,
   aoMudar,
   aoAvisar,
+  aoEu,
 }: {
   card: Card;
   eu: Eu;
   aoMudar: (mural: Mural) => void;
   aoAvisar: (texto: string) => void;
+  aoEu: (eu: Eu) => void;
 }) {
   const tarefa = card.tarefa;
   const [aviso, setAviso] = useState("");
@@ -156,9 +169,15 @@ function CardFolha({
   }
 
   return (
-    <article className="folha">
+    <article
+      className="folha post-it"
+      style={{ ["--postit" as string]: card.programador.cor?.hex ?? "var(--papel)" }}
+    >
       {tarefa && (
-        <div className="progresso" aria-label={`${tarefa.x} de ${tarefa.y}`}>
+        <div
+          className="progresso"
+          aria-label={`${tarefa.x} de ${tarefa.y}`}
+        >
           <span className="enchimento" style={{ width: `${tarefa.percentual}%` }} />
           <em>{tarefa.x}/{tarefa.y}</em>
           {tarefa.insignia && <i className="insignia" aria-label="Ciência completa" />}
@@ -215,13 +234,14 @@ function CardFolha({
                   type="button"
                   className="alfinete"
                   aria-pressed={ciencia.marcada}
+                  aria-label={`${ciencia.marcada ? "Ciência marcada" : "Marcar ciência"} de ${ciencia.username}`}
                   disabled={!ciencia.acionavel}
                   onClick={() => {
                     const pedido = ciencia.marcada ? api.desmarcar(tarefa.id) : api.marcar(tarefa.id);
                     pedido.then(aoMudar).catch(falha);
                   }}
                 >
-                  <i />
+                  <Taxinha hex={ciencia.cor?.hex ?? null} marcada={ciencia.marcada} />
                   {ciencia.username}
                 </button>
               </li>
@@ -273,6 +293,17 @@ function CardFolha({
           <p className="meta">Sem tarefa agora.</p>
         )}
       <p className="aviso">{aviso}</p>
+      {eu.id === card.programador.id && eu.papel === "programador" && (
+        <EscolhaDeCor
+          atual={card.programador.cor}
+          username={eu.username}
+          aoFalhar={falha}
+          aoEscolher={(pessoa) => {
+            aoEu(pessoa);
+            api.mural().then(aoMudar).catch(falha);
+          }}
+        />
+      )}
     </article>
   );
 }
@@ -558,6 +589,115 @@ function Categorias() {
           <li key={cat.id}>
             {cat.nome}
             <button type="button" className="acao" onClick={() => api.excluirCategoria(cat.id).then(setLista)}>Excluir</button>
+          </li>
+        ))}
+      </ul>
+      <p className="aviso">{aviso}</p>
+    </section>
+  );
+}
+
+function IconeCaneta() {
+  return (
+    <svg className="icone-svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 2.33H5v-.92l8.06-8.06.92.92L5.92 19.58zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+      />
+    </svg>
+  );
+}
+
+function IconeTema({ escuro }: { escuro: boolean }) {
+  if (escuro) {
+    return (
+      <svg className="icone-svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M21 14.5A8.5 8.5 0 0 1 9.5 3 7 7 0 1 0 21 14.5z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="icone-svg" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" fill="currentColor" />
+      <g stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+        <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.1 5.1l1.6 1.6M17.3 17.3l1.6 1.6M18.9 5.1l-1.6 1.6M6.7 17.3l-1.6 1.6" />
+      </g>
+    </svg>
+  );
+}
+
+function Taxinha({ hex, marcada }: { hex: string | null; marcada: boolean }) {
+  return (
+    <span
+      className={`taxinha ${marcada ? "taxinha-presa" : ""}`}
+      style={{ color: hex ?? "currentColor" }}
+      aria-hidden="true"
+      dangerouslySetInnerHTML={{ __html: pinSvg }}
+    />
+  );
+}
+
+function EscolhaDeCor({
+  atual,
+  username,
+  aoEscolher,
+  aoFalhar,
+}: {
+  atual: Cor | null;
+  username: string;
+  aoEscolher: (eu: Eu) => void;
+  aoFalhar: (erro: Error) => void;
+}) {
+  const [cores, setCores] = useState<(Cor & { ocupadaPor: string | null })[]>([]);
+  useEffect(() => {
+    api.cores().then(setCores).catch(aoFalhar);
+  }, [atual?.id]);
+  const livres = cores.filter((item) => !item.ocupadaPor || item.ocupadaPor === username);
+  if (livres.length === 0) return null;
+  return (
+    <div className="amostras" role="group" aria-label="Cor do post-it">
+      {livres.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          className="amostra"
+          style={{ background: item.hex }}
+          aria-label={item.nome}
+          aria-pressed={atual?.id === item.id}
+          onClick={() => api.escolherCor(item.id).then(aoEscolher).catch(aoFalhar)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Cores() {
+  const [lista, setLista] = useState<(Cor & { ocupadaPor: string | null })[]>([]);
+  const [nome, setNome] = useState("");
+  const [hex, setHex] = useState("#5c7c99");
+  const [aviso, setAviso] = useState("");
+  function carregar() {
+    api.cores().then(setLista).catch((erro: Error) => setAviso(erro.message));
+  }
+  useEffect(carregar, []);
+  return (
+    <section className="folha painel">
+      <h1 className="nome">Cores</h1>
+      <form className="filtros" onSubmit={(e) => {
+        e.preventDefault();
+        api.criarCor(nome, hex).then(() => { setNome(""); carregar(); }).catch((erro: Error) => setAviso(erro.message));
+      }}>
+        <input className="linha" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome da cor" />
+        <input className="linha campo-cor" type="color" value={hex} aria-label="Hex da cor" onChange={(e) => setHex(e.target.value)} />
+        <button className="acao" type="submit">Cadastrar</button>
+      </form>
+      <ul>
+        {lista.map((item) => (
+          <li key={item.id}>
+            <i className="amostra amostra-fixa" style={{ background: item.hex }} />
+            {item.nome}
+            {item.ocupadaPor ? ` · ${item.ocupadaPor}` : ""}
+            <button type="button" className="acao" onClick={() => api.excluirCor(item.id).then(setLista)}>Excluir</button>
           </li>
         ))}
       </ul>

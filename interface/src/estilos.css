@@ -131,20 +131,45 @@ button {
 
 .folha:hover { transform: translateY(-2px); }
 
+.icone-svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: block;
+}
+
+button.icone.caneta { color: var(--caneta); }
+
+.folha.post-it {
+  --dobra: 1.45rem;
+  background: var(--postit, var(--papel));
+  overflow: visible;
+  box-shadow: none;
+  filter: drop-shadow(0 6px 7px rgb(42 42 42 / 13%));
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--dobra)),
+    calc(100% - var(--dobra)) 100%,
+    0 100%
+  );
+  transition: background-color var(--duracao) var(--curva), filter var(--duracao) var(--curva), transform var(--duracao) var(--curva);
+}
+
 .progresso {
   height: 1.35rem;
-  background: color-mix(in srgb, var(--progresso) 18%, var(--papel));
+  background: color-mix(in srgb, var(--postit, var(--papel)) 70%, white);
   margin: -1rem -1.05rem 0.85rem;
   position: relative;
   overflow: hidden;
+  transition: background-color var(--duracao) var(--curva);
 }
 
 .progresso span.enchimento {
   display: block;
   height: 100%;
-  background: var(--progresso);
+  background: color-mix(in srgb, var(--postit, var(--papel)) 70%, black);
   width: 0;
-  transition: width 240ms var(--curva);
+  transition: width 240ms var(--curva), background-color var(--duracao) var(--curva);
 }
 
 .progresso em {
@@ -225,24 +250,56 @@ button {
 .alfinete {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.15rem;
   background: transparent;
   border: 0;
-  padding: 0.35rem 0;
+  padding: 0.15rem 0.2rem 0;
   color: var(--tinta-suave);
-  min-height: 2.25rem;
+  min-height: 2.75rem;
 }
 
-.alfinete i {
-  width: 0.55rem;
-  height: 0.55rem;
+.taxinha {
+  width: 2.15rem;
+  height: 2.7rem;
+  display: block;
+  transform: rotate(-10deg);
+  transform-origin: 50% 18%;
+  transition: transform var(--duracao) var(--curva);
+}
+
+.taxinha svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.taxinha .haste { fill: #1a1a1a; }
+
+.taxinha:not(.taxinha-presa) .cabeca {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+}
+
+.taxinha-presa { transform: rotate(-14deg) translateY(2px); }
+
+.amostras { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.8rem; }
+
+.amostra {
+  width: 1.35rem;
+  height: 1.35rem;
   border-radius: 50%;
-  border: 1.5px solid var(--tinta);
-  display: inline-block;
-  transition: background-color var(--duracao) var(--curva), transform var(--duracao) var(--curva);
+  border: 1px solid color-mix(in srgb, var(--tinta) 35%, transparent);
+  padding: 0;
+  transition: transform var(--duracao) var(--curva), box-shadow var(--duracao) var(--curva);
 }
 
-.alfinete[aria-pressed="true"] i { background: var(--tinta); transform: translateY(1px); }
+.amostra[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--tinta); }
+
+.amostra-fixa { display: inline-block; vertical-align: middle; margin-right: 0.35rem; }
+
+.campo-cor { width: 2.5rem; height: 1.8rem; padding: 0; border: 0; background: transparent; }
 .alfinete:disabled { cursor: default; }
 
 .aviso {

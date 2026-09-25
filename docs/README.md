@@ -31,6 +31,7 @@ SDD aqui é Specification-Driven Development: a especificação descreve o compo
 | [`docs/02-especificacoes/04-relatorios.md`](02-especificacoes/04-relatorios.md) | Relatórios | fechada |
 | [`docs/02-especificacoes/05-membros-e-acesso.md`](02-especificacoes/05-membros-e-acesso.md) | Membros e acesso | fechada |
 | [`docs/02-especificacoes/06-categorias.md`](02-especificacoes/06-categorias.md) | Categorias | fechada |
+| [`docs/02-especificacoes/07-cores.md`](02-especificacoes/07-cores.md) | Cores do post-it | fechada |
 | [`docs/03-experiencia/linguagem-visual.md`](03-experiencia/linguagem-visual.md) | Linguagem visual | fechada |
 | [`docs/04-arquitetura/restricoes-tecnicas.md`](04-arquitetura/restricoes-tecnicas.md) | Restrições técnicas | fechada |
 | [`docs/04-arquitetura/frontend-react-e-impeccable.md`](04-arquitetura/frontend-react-e-impeccable.md) | Frontend React e skill Impeccable | vigente |
@@ -67,3 +68,4 @@ A spec descreve comportamento observável. Nome de classe e arquivo só aparece 
 - **2026-09-24** — documentação de frontend: CSS no template base, `STATIC_ROOT`, e guia para compilar Tailwind quando adotar build local ([frontend-estilos-e-tailwind.md](04-arquitetura/frontend-estilos-e-tailwind.md)).
 - **2026-09-25** — nova leva: TypeScript e React; servidor Hono; Drizzle; SQLite em arquivo local e PostgreSQL depois; papel cinza neutro com fibra, sem amarelo de editorial; transições suaves em tudo; edição só ao clicar no texto, mesma fonte, gravação ao vivo; frontend pela skill Impeccable; implementação pelo Grok 4.7 extra high (contexto 500 mil tokens), com Composer 2.5 só para iterar arquivos e código. A implementação Django fica rejeitada.
 - **2026-09-25** — specs de comportamento promovidas a fechada, sem mudança de regra, para a implementação TypeScript.
+- **2026-09-25** — cores de post-it: catálogo do admin, escolha exclusiva do programador, taxinha da cor de quem marcou, barra 30% mais clara e 30% mais escura que o card, ícone de caneta e sol/lua, canto inferior direito dobrado.

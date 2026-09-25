@@ -206,4 +206,26 @@ describe("aceitação", () => {
     expect(naParede.duracaoMs).toBe(23 * 60 * 60 * 1000);
     expect(completo.tarefas.find((t) => t.descricao === "fora")).toBeUndefined();
   });
+
+  it("cor de post-it é exclusiva entre programadores ativos", () => {
+    const { produto, admin, criar } = novo();
+    const ana = criar("ana");
+    const bruno = criar("bruno");
+    expect(() => produto.criarCor(ana.id, { nome: "Azul", hex: "#2255aa" })).toThrow(ErroDeRegra);
+    const azul = produto.criarCor(admin.id, { nome: "Azul", hex: "#2255aa" });
+    produto.escolherCor(ana.id, azul.id);
+    expect(() => produto.escolherCor(bruno.id, azul.id)).toThrow(ErroDeRegra);
+    produto.editarMembro(admin.id, ana.id, { ativo: false });
+    produto.escolherCor(bruno.id, azul.id);
+    expect(produto.mural(bruno.id).cards[0].programador.cor?.hex).toBe("#2255aa");
+    produto.editarMembro(admin.id, ana.id, { ativo: true });
+    const anaDeNovo = produto.listarMembros(admin.id).find((m) => m.id === ana.id);
+    expect(anaDeNovo?.ativo).toBe(1);
+    expect(produto.entrar("ana", "123456")).toBeTruthy();
+    const mural = produto.mural(ana.id);
+    const cardAna = mural.cards.find((c) => c.programador.username === "ana");
+    expect(cardAna?.programador.cor).toBeNull();
+    produto.excluirCor(admin.id, azul.id);
+    expect(produto.mural(bruno.id).cards.find((c) => c.programador.username === "bruno")?.programador.cor).toBeNull();
+  });
 });

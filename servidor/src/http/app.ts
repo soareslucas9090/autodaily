@@ -67,6 +67,23 @@ export function criarApp(banco: Banco, relogio: () => Date = () => new Date()) {
     return c.json(produto.usuarioPublico(c.get("usuarioId")));
   });
 
+  app.get("/api/cores", (c) => c.json(produto.listarCores()));
+
+  app.post("/api/cores", async (c) => {
+    const corpo = await c.req.json<{ nome: string; hex: string }>();
+    return c.json(produto.criarCor(c.get("usuarioId"), corpo), 201);
+  });
+
+  app.delete("/api/cores/:id", (c) => {
+    produto.excluirCor(c.get("usuarioId"), c.req.param("id"));
+    return c.json(produto.listarCores());
+  });
+
+  app.patch("/api/eu/cor", async (c) => {
+    const corpo = await c.req.json<{ corId: string }>();
+    return c.json(produto.escolherCor(c.get("usuarioId"), corpo.corId));
+  });
+
   app.get("/api/mural", (c) => c.json(produto.mural(c.get("usuarioId"))));
 
   app.post("/api/mural/publicar", async (c) => {

@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, gte, inArray, lte } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 import type { Banco } from "../banco/abrir.js";
-import { categoria, ciencia, tarefa, tarefaCategoria, usuario } from "../banco/esquema.js";
+import { categoria, ciencia, cor, tarefa, tarefaCategoria, usuario } from "../banco/esquema.js";
 import { ErroDeRegra } from "./erros.js";
 import { conferirSenha, exigirSenhaValida, gerarHash } from "./senha.js";
 import { diaNoFuso, fimDoDia, inicioDoDia } from "./tempo.js";
@@ -157,6 +157,8 @@ export class Produto {
       exigirSenhaValida(dados.senha);
       senhaHash = gerarHash(dados.senha);
     }
+    let corId = membro.corId;
+    if (dados.ativo === true && corId && this.ocupanteAtivo(corId, membroId)) corId = null;
     this.banco
       .update(usuario)
       .set({
@@ -164,6 +166,7 @@ export class Produto {
         senhaHash,
         ativo: dados.ativo === undefined ? membro.ativo : dados.ativo ? 1 : 0,
         papel: dados.papel ?? membro.papel,
+        corId,
         atualizadoEm: instante,
       })
       .where(eq(usuario.id, membroId))
@@ -183,6 +186,68 @@ export class Produto {
       .set({ caneta, atualizadoEm: agoraIso(this.instante()) })
       .where(eq(usuario.id, usuarioId))
       .run();
+  }
+
+  private corDe(id: string | null) {
+    if (!id) return null;
+    const linha = this.banco.select().from(cor).where(eq(cor.id, id)).get();
+    return linha ? { id: linha.id, nome: linha.nome, hex: linha.hex } : null;
+  }
+
+  private ocupanteAtivo(corId: string, excetoId?: string) {
+    return this.programadoresAtivos().find((pessoa) => pessoa.corId === corId && pessoa.id !== excetoId);
+  }
+
+  criarCor(atorId: string, dados: { nome: string; hex: string }) {
+    this.exigirAdmin(atorId);
+    const nome = limparTexto(dados.nome);
+    const hex = (dados.hex ?? "").trim();
+    if (!nome) throw new ErroDeRegra("nome-vazio", "O nome da cor é obrigatório.");
+    if (!/^#[0-9a-fA-F]{6}$/.test(hex)) throw new ErroDeRegra("hex-invalido", "A cor precisa de um hex #rrggbb.");
+    const instante = agoraIso(this.instante());
+    const id = randomUUID();
+    this.banco.insert(cor).values({ id, nome, hex, criadoEm: instante, atualizadoEm: instante }).run();
+    return this.corDe(id)!;
+  }
+
+  excluirCor(atorId: string, corId: string): void {
+    this.exigirAdmin(atorId);
+    this.banco.update(usuario).set({ corId: null }).where(eq(usuario.corId, corId)).run();
+    this.banco.delete(cor).where(eq(cor.id, corId)).run();
+  }
+
+  listarCores() {
+    return this.banco
+      .select()
+      .from(cor)
+      .all()
+      .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
+      .map((linha) => {
+        const ocupante = this.ocupanteAtivo(linha.id);
+        return {
+          id: linha.id,
+          nome: linha.nome,
+          hex: linha.hex,
+          ocupadaPor: ocupante?.username ?? null,
+        };
+      });
+  }
+
+  escolherCor(usuarioId: string, corId: string) {
+    const pessoa = this.buscarUsuario(usuarioId);
+    if (pessoa.papel !== "programador" || pessoa.ativo !== 1) {
+      throw new ErroDeRegra("nao-autorizado", "Só programador ativo escolhe cor.");
+    }
+    if (!this.corDe(corId)) throw new ErroDeRegra("nao-encontrado", "Cor não encontrada.");
+    if (this.ocupanteAtivo(corId, usuarioId)) {
+      throw new ErroDeRegra("cor-ocupada", "Essa cor já está com outro programador.");
+    }
+    this.banco
+      .update(usuario)
+      .set({ corId, atualizadoEm: agoraIso(this.instante()) })
+      .where(eq(usuario.id, usuarioId))
+      .run();
+    return this.publico(this.buscarUsuario(usuarioId));
   }
 
   criarCategoria(atorId: string, nome: string) {
@@ -374,7 +439,11 @@ export class Produto {
         .where(and(eq(tarefa.autorId, programador.id), eq(tarefa.naParede, 0)))
         .get();
       return {
-        programador: { id: programador.id, username: programador.username },
+        programador: {
+          id: programador.id,
+          username: programador.username,
+          cor: this.corDe(programador.corId),
+        },
         podeRetornar: !atual && Boolean(guardada) && ator.id === programador.id,
         tarefa: atual ? this.detalheCard(atual, ator) : null,
       };
@@ -394,6 +463,7 @@ export class Produto {
       username: pessoa.username,
       marcada: marcas.has(pessoa.id),
       acionavel: ator.papel === "programador" && ator.id === pessoa.id && ator.id !== linha.autorId,
+      cor: this.corDe(pessoa.corId),
     }));
     return {
       id: linha.id,
@@ -417,6 +487,7 @@ export class Produto {
       username: linha.username,
       papel: linha.papel as Papel,
       caneta: linha.caneta as Caneta,
+      cor: this.corDe(linha.corId),
     };
   }
 

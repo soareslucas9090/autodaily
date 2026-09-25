@@ -7,6 +7,7 @@ export const usuario = sqliteTable("usuario", {
   papel: text("papel").notNull(),
   ativo: integer("ativo").notNull().default(1),
   caneta: text("caneta").notNull().default("azul"),
+  corId: text("cor_id"),
   criadoEm: text("criado_em").notNull(),
   atualizadoEm: text("atualizado_em").notNull(),
 });
@@ -53,6 +54,14 @@ export const tarefaCategoria = sqliteTable(
   (tabela) => [primaryKey({ columns: [tabela.tarefaId, tabela.categoriaId] })],
 );
 
+export const cor = sqliteTable("cor", {
+  id: text("id").primaryKey(),
+  nome: text("nome").notNull().unique(),
+  hex: text("hex").notNull(),
+  criadoEm: text("criado_em").notNull(),
+  atualizadoEm: text("atualizado_em").notNull(),
+});
+
 export const ciencia = sqliteTable("ciencia", {
   id: text("id").primaryKey(),
   tarefaId: text("tarefa_id")
@@ -72,6 +81,7 @@ CREATE TABLE IF NOT EXISTS usuario (
   papel TEXT NOT NULL,
   ativo INTEGER NOT NULL DEFAULT 1,
   caneta TEXT NOT NULL DEFAULT 'azul',
+  cor_id TEXT,
   criado_em TEXT NOT NULL,
   atualizado_em TEXT NOT NULL
 );
@@ -101,6 +111,13 @@ CREATE TABLE IF NOT EXISTS tarefa_categoria (
   tarefa_id TEXT NOT NULL REFERENCES tarefa(id),
   categoria_id TEXT NOT NULL REFERENCES categoria(id),
   PRIMARY KEY (tarefa_id, categoria_id)
+);
+CREATE TABLE IF NOT EXISTS cor (
+  id TEXT PRIMARY KEY,
+  nome TEXT NOT NULL UNIQUE,
+  hex TEXT NOT NULL,
+  criado_em TEXT NOT NULL,
+  atualizado_em TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS ciencia (
   id TEXT PRIMARY KEY,
