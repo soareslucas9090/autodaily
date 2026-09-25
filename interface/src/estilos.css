@@ -155,6 +155,14 @@ button.icone.caneta { color: var(--caneta); }
   transition: background-color var(--duracao) var(--curva), filter var(--duracao) var(--curva), transform var(--duracao) var(--curva);
 }
 
+.folha.post-it .rotulo,
+.folha.post-it .meta,
+.folha.post-it .acao,
+.folha.post-it .alfinete,
+.folha.post-it .categorias-escolha {
+  color: color-mix(in srgb, var(--postit, var(--papel)) 12%, #141414);
+}
+
 .folha.post-it::after {
   content: "";
   position: absolute;
@@ -418,11 +426,49 @@ button.icone.caneta { color: var(--caneta); }
 
 .categorias-escolha {
   display: grid;
-  gap: 0.25rem;
-  margin-top: 0.4rem;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
 }
 
-.categorias-escolha label { display: flex; gap: 0.4rem; align-items: center; }
+.categorias-escolha label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 1.75rem;
+}
+
+.categorias-escolha input {
+  appearance: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid color-mix(in srgb, var(--postit, var(--papel)) 12%, #141414);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--duracao) var(--curva), border-color var(--duracao) var(--curva);
+}
+
+.categorias-escolha input:checked {
+  background: color-mix(in srgb, var(--postit, var(--papel)) 12%, #141414);
+  border-color: transparent;
+}
+
+.categorias-escolha input:checked::after {
+  content: "";
+  width: 0.28rem;
+  height: 0.48rem;
+  border: solid var(--postit, var(--papel));
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg);
+}
+
+.categorias-escolha input:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--postit, var(--papel)) 12%, #141414);
+  outline-offset: 3px;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
