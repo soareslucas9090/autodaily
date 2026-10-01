@@ -609,9 +609,10 @@ function Membros() {
   const [senha, setSenha] = useState("");
   const [papel, setPapel] = useState<Papel>("programador");
   const [aviso, setAviso] = useState("");
+  const [ok, setOk] = useState("");
   const [redefinirId, setRedefinirId] = useState<string | null>(null);
   const [novaSenha, setNovaSenha] = useState("");
-  const [ocupado, setOcupado] = useState(false);
+  const [ocupado, setOcupado] = useState<null | "cadastro" | "senha" | "ativo">(null);
   const campoNovaSenha = useRef<HTMLInputElement>(null);
 
   function carregar() {
@@ -627,25 +628,32 @@ function Membros() {
   }, [redefinirId]);
 
   function falhou(erro: Error) {
+    setOk("");
     setAviso(erro.message);
-    setOcupado(false);
+    setOcupado(null);
   }
 
   return (
-    <section className="folha painel elenco">
+    <section className="folha painel elenco" aria-busy={Boolean(ocupado)}>
       <h1 className="nome">Membros</h1>
+      <div className="status-elenco" aria-live="polite">
+        {ok ? <p className="rotulo">{ok}</p> : null}
+        {aviso ? <p className="aviso">{aviso}</p> : null}
+      </div>
 
       <form
         className="cadastro"
         onSubmit={(evento) => {
           evento.preventDefault();
           setAviso("");
-          setOcupado(true);
+          setOk("");
+          setOcupado("cadastro");
           api.criarMembro({ username, senha, papel }).then(() => {
             setUsername("");
             setSenha("");
             setPapel("programador");
-            setOcupado(false);
+            setOcupado(null);
+            setOk("Membro registrado.");
             carregar();
           }).catch(falhou);
         }}
@@ -675,7 +683,7 @@ function Membros() {
               placeholder="Mínimo 6 caracteres"
             />
           </label>
-          <label className="campo">
+          <label className="campo campo-papel">
             <span>Papel</span>
             <select
               className="linha escolha"
@@ -687,7 +695,9 @@ function Membros() {
             </select>
           </label>
           <div className="acoes-cadastro">
-            <button className="botao" type="submit" disabled={ocupado}>Registrar</button>
+            <button className="botao" type="submit" disabled={Boolean(ocupado)}>
+              {ocupado === "cadastro" ? "Registrando…" : "Registrar"}
+            </button>
           </div>
         </div>
       </form>
@@ -710,12 +720,15 @@ function Membros() {
                       <button
                         type="button"
                         className="botao"
-                        disabled={ocupado}
+                        disabled={Boolean(ocupado)}
                         onClick={() => {
+                          const ativo = !membro.ativo;
                           setAviso("");
-                          setOcupado(true);
-                          api.editarMembro(membro.id, { ativo: !membro.ativo }).then(() => {
-                            setOcupado(false);
+                          setOk("");
+                          setOcupado("ativo");
+                          api.editarMembro(membro.id, { ativo }).then(() => {
+                            setOcupado(null);
+                            setOk(ativo ? `${membro.username} reativado.` : `${membro.username} desativado.`);
                             carregar();
                           }).catch(falhou);
                         }}
@@ -725,7 +738,7 @@ function Membros() {
                       <button
                         type="button"
                         className="botao"
-                        disabled={ocupado}
+                        disabled={Boolean(ocupado)}
                         aria-expanded={redefinindo}
                         aria-controls={redefinindo ? `redefinir-${membro.id}` : undefined}
                         onClick={() => {
@@ -760,15 +773,18 @@ function Membros() {
                       onSubmit={(evento) => {
                         evento.preventDefault();
                         if (novaSenha.length < 6) {
+                          setOk("");
                           setAviso("A nova senha precisa ter no mínimo 6 caracteres.");
                           return;
                         }
                         setAviso("");
-                        setOcupado(true);
+                        setOk("");
+                        setOcupado("senha");
                         api.editarMembro(membro.id, { senha: novaSenha }).then(() => {
                           setNovaSenha("");
                           setRedefinirId(null);
-                          setOcupado(false);
+                          setOcupado(null);
+                          setOk(`Senha de ${membro.username} redefinida.`);
                           carregar();
                         }).catch(falhou);
                       }}
@@ -787,7 +803,9 @@ function Membros() {
                           placeholder="Mínimo 6 caracteres"
                         />
                       </label>
-                      <button className="botao" type="submit" disabled={ocupado}>Gravar senha</button>
+                      <button className="botao" type="submit" disabled={Boolean(ocupado)}>
+                        {ocupado === "senha" ? "Gravando…" : "Gravar senha"}
+                      </button>
                     </form>
                   )}
                 </li>
@@ -796,7 +814,6 @@ function Membros() {
           </ul>
         )}
       </div>
-      <p className="aviso" role="alert">{aviso}</p>
     </section>
   );
 }
