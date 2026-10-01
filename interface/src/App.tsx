@@ -597,59 +597,206 @@ function Conta({ eu, aoAvisar }: { eu: Eu; aoAvisar: (texto: string) => void }) 
   );
 }
 
+type Membro = { id: string; username: string; papel: Papel; ativo: boolean };
+
+function rotuloPapel(papel: Papel) {
+  return papel === "admin" ? "Admin" : "Programador";
+}
+
 function Membros() {
-  const [lista, setLista] = useState<{ id: string; username: string; papel: Papel; ativo: boolean }[]>([]);
+  const [lista, setLista] = useState<Membro[] | null>(null);
   const [username, setUsername] = useState("");
   const [senha, setSenha] = useState("");
   const [papel, setPapel] = useState<Papel>("programador");
   const [aviso, setAviso] = useState("");
+  const [redefinirId, setRedefinirId] = useState<string | null>(null);
+  const [novaSenha, setNovaSenha] = useState("");
+  const [ocupado, setOcupado] = useState(false);
+  const campoNovaSenha = useRef<HTMLInputElement>(null);
 
   function carregar() {
-    api.membros().then(setLista).catch((erro: Error) => setAviso(erro.message));
+    return api.membros().then(setLista).catch((erro: Error) => {
+      setAviso(erro.message);
+      setLista((atual) => atual ?? []);
+    });
   }
-  useEffect(carregar, []);
+  useEffect(() => { carregar(); }, []);
+
+  useEffect(() => {
+    if (redefinirId) campoNovaSenha.current?.focus();
+  }, [redefinirId]);
+
+  function falhou(erro: Error) {
+    setAviso(erro.message);
+    setOcupado(false);
+  }
 
   return (
-    <section className="folha painel">
+    <section className="folha painel elenco">
       <h1 className="nome">Membros</h1>
-      <form className="filtros" onSubmit={(e) => {
-        e.preventDefault();
-        api.criarMembro({ username, senha, papel }).then(() => { setUsername(""); setSenha(""); carregar(); }).catch((erro: Error) => setAviso(erro.message));
-      }}>
-        <input className="linha" placeholder="Nome de usuário" value={username} onChange={(e) => setUsername(e.target.value)} />
-        <input className="linha" placeholder="Senha (mínimo 6 caracteres)" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-        <select className="linha" value={papel} onChange={(e) => setPapel(e.target.value as Papel)}>
-          <option value="programador">Programador</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button className="acao" type="submit">Registrar</button>
-      </form>
-      <ul className="lista">
-        {lista.map((membro) => (
-          <li key={membro.id} className="linha-membro">
-            <span>{membro.username}</span>
-            <span>{membro.papel}</span>
-            <span>{membro.ativo ? "ativo" : "desativado"}</span>
-            <button type="button" className="acao" onClick={() => api.editarMembro(membro.id, { ativo: !membro.ativo }).then(carregar)}>
-              {membro.ativo ? "Desativar" : "Reativar"}
-            </button>
-            <button type="button" className="acao" onClick={() => {
-              const campo = document.getElementById(`senha-${membro.id}`) as HTMLInputElement | null;
-              const nova = campo?.value ?? "";
-              if (!nova) return;
-              api.editarMembro(membro.id, { senha: nova }).then(() => { if (campo) campo.value = ""; carregar(); }).catch((erro: Error) => setAviso(erro.message));
-            }}>Redefinir senha</button>
+
+      <form
+        className="cadastro"
+        onSubmit={(evento) => {
+          evento.preventDefault();
+          setAviso("");
+          setOcupado(true);
+          api.criarMembro({ username, senha, papel }).then(() => {
+            setUsername("");
+            setSenha("");
+            setPapel("programador");
+            setOcupado(false);
+            carregar();
+          }).catch(falhou);
+        }}
+      >
+        <h2 className="secao">Registrar</h2>
+        <div className="grade-cadastro">
+          <label className="campo">
+            <span>Nome de usuário</span>
             <input
-              id={`senha-${membro.id}`}
+              className="linha"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="off"
+              required
+            />
+          </label>
+          <label className="campo">
+            <span>Senha</span>
+            <input
               className="linha"
               type="password"
-              placeholder="Nova senha"
-              aria-label={`Nova senha de ${membro.username}`}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              autoComplete="new-password"
+              required
+              minLength={6}
+              placeholder="Mínimo 6 caracteres"
             />
-          </li>
-        ))}
-      </ul>
-      <p className="aviso">{aviso}</p>
+          </label>
+          <label className="campo">
+            <span>Papel</span>
+            <select
+              className="linha escolha"
+              value={papel}
+              onChange={(e) => setPapel(e.target.value as Papel)}
+            >
+              <option value="programador">Programador</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+          <div className="acoes-cadastro">
+            <button className="botao" type="submit" disabled={ocupado}>Registrar</button>
+          </div>
+        </div>
+      </form>
+
+      <div className="time">
+        <h2 className="secao">Time</h2>
+        {lista === null ? (
+          <p className="rotulo">Abrindo o time…</p>
+        ) : lista.length === 0 ? (
+          <p className="rotulo">Ninguém no time ainda.</p>
+        ) : (
+          <ul className="elenco-time">
+            {lista.map((membro) => {
+              const redefinindo = redefinirId === membro.id;
+              return (
+                <li key={membro.id} className={membro.ativo ? "membro" : "membro membro-parado"}>
+                  <div className="membro-topo">
+                    <h3 className="identidade">{membro.username}</h3>
+                    <div className="acoes-membro">
+                      <button
+                        type="button"
+                        className="botao"
+                        disabled={ocupado}
+                        onClick={() => {
+                          setAviso("");
+                          setOcupado(true);
+                          api.editarMembro(membro.id, { ativo: !membro.ativo }).then(() => {
+                            setOcupado(false);
+                            carregar();
+                          }).catch(falhou);
+                        }}
+                      >
+                        {membro.ativo ? "Desativar" : "Reativar"}
+                      </button>
+                      <button
+                        type="button"
+                        className="botao"
+                        disabled={ocupado}
+                        aria-expanded={redefinindo}
+                        aria-controls={redefinindo ? `redefinir-${membro.id}` : undefined}
+                        onClick={() => {
+                          if (redefinindo) {
+                            setRedefinirId(null);
+                            setNovaSenha("");
+                            return;
+                          }
+                          setAviso("");
+                          setRedefinirId(membro.id);
+                          setNovaSenha("");
+                        }}
+                      >
+                        {redefinindo ? "Cancelar" : "Redefinir senha"}
+                      </button>
+                    </div>
+                  </div>
+                  <dl className="ficha">
+                    <div>
+                      <dt>Papel</dt>
+                      <dd>{rotuloPapel(membro.papel)}</dd>
+                    </div>
+                    <div>
+                      <dt>Situação</dt>
+                      <dd>{membro.ativo ? "Ativo" : "Desativado"}</dd>
+                    </div>
+                  </dl>
+                  {redefinindo && (
+                    <form
+                      id={`redefinir-${membro.id}`}
+                      className="redefinir"
+                      onSubmit={(evento) => {
+                        evento.preventDefault();
+                        if (novaSenha.length < 6) {
+                          setAviso("A nova senha precisa ter no mínimo 6 caracteres.");
+                          return;
+                        }
+                        setAviso("");
+                        setOcupado(true);
+                        api.editarMembro(membro.id, { senha: novaSenha }).then(() => {
+                          setNovaSenha("");
+                          setRedefinirId(null);
+                          setOcupado(false);
+                          carregar();
+                        }).catch(falhou);
+                      }}
+                    >
+                      <label className="campo">
+                        <span>Nova senha de {membro.username}</span>
+                        <input
+                          ref={campoNovaSenha}
+                          className="linha"
+                          type="password"
+                          value={novaSenha}
+                          onChange={(e) => setNovaSenha(e.target.value)}
+                          autoComplete="new-password"
+                          required
+                          minLength={6}
+                          placeholder="Mínimo 6 caracteres"
+                        />
+                      </label>
+                      <button className="botao" type="submit" disabled={ocupado}>Gravar senha</button>
+                    </form>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+      <p className="aviso" role="alert">{aviso}</p>
     </section>
   );
 }

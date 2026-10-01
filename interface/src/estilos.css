@@ -132,6 +132,7 @@ button {
 }
 
 .folha:hover { transform: translateY(-2px); }
+.folha.painel:hover { transform: none; }
 
 .icone-svg {
   width: 1.35rem;
@@ -434,6 +435,189 @@ button.icone.caneta { color: var(--caneta); }
   flex-wrap: wrap;
   gap: 0.75rem 1rem;
   align-items: end;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.85rem;
+  border: 1px solid var(--fio);
+  background: color-mix(in srgb, var(--tinta) 5%, transparent);
+  color: var(--tinta);
+  font: inherit;
+  font-size: 0.95rem;
+  transition:
+    background-color var(--duracao) var(--curva),
+    border-color var(--duracao) var(--curva),
+    color var(--duracao) var(--curva),
+    opacity var(--duracao) var(--curva);
+}
+
+.botao:hover {
+  background: color-mix(in srgb, var(--tinta) 11%, transparent);
+  border-color: var(--tinta);
+}
+
+.botao:active {
+  background: color-mix(in srgb, var(--tinta) 16%, transparent);
+}
+
+.botao:focus-visible,
+.elenco .linha:focus-visible,
+.elenco .escolha:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 2px;
+}
+
+.botao:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.elenco {
+  container-type: inline-size;
+  width: min(40rem, 100%);
+}
+
+.elenco .nome {
+  margin: 0 0 1.25rem;
+  font-size: 1.25rem;
+}
+
+.elenco .secao {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--tinta);
+  text-wrap: balance;
+}
+
+.elenco .cadastro {
+  margin: 0.35rem 0 0;
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid var(--fio);
+}
+
+.elenco .grade-cadastro {
+  display: grid;
+  gap: 0.75rem 1rem;
+}
+
+.elenco .campo {
+  margin-bottom: 0;
+}
+
+.elenco .acoes-cadastro {
+  display: flex;
+  align-items: end;
+}
+
+.elenco .escolha {
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--tinta);
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.elenco .time {
+  margin-top: 1.5rem;
+}
+
+.elenco-time {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.membro {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--fio);
+}
+
+.membro:last-child {
+  border-bottom: 0;
+  padding-bottom: 0.25rem;
+}
+
+.membro-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.identidade {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--tinta);
+  text-wrap: balance;
+}
+
+.membro-parado .identidade,
+.membro-parado .ficha dd {
+  color: var(--tinta-suave);
+}
+
+.acoes-membro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ficha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+  margin: 0;
+}
+
+.ficha div {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.ficha dt {
+  font-size: 0.85rem;
+  color: var(--tinta-suave);
+}
+
+.ficha dd {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.redefinir {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  animation: surgir var(--duracao) var(--curva);
+}
+
+@container (min-width: 28rem) {
+  .elenco .grade-cadastro {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .elenco .acoes-cadastro {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
+  .redefinir {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
 }
 
 .tabela { width: 100%; border-collapse: collapse; }
