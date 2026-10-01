@@ -60,6 +60,11 @@ export const api = {
   sair: () => pedir<{ ok: boolean }>("/api/sessao", { method: "DELETE" }),
   caneta: (caneta: Caneta) =>
     pedir<Eu>("/api/eu/caneta", { method: "PATCH", body: JSON.stringify({ caneta }) }),
+  alterarSenha: (senhaAtual: string, senhaNova: string) =>
+    pedir<{ ok: boolean }>("/api/eu/senha", {
+      method: "PATCH",
+      body: JSON.stringify({ senhaAtual, senhaNova }),
+    }),
   mural: () => pedir<Mural>("/api/mural"),
   publicar: (corpo: { descricao: string; idTrello?: string | null; categoriaIds?: string[] }) =>
     pedir<Mural>("/api/mural/publicar", { method: "POST", body: JSON.stringify(corpo) }),

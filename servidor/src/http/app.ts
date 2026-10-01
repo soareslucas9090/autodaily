@@ -67,6 +67,12 @@ export function criarApp(banco: Banco, relogio: () => Date = () => new Date()) {
     return c.json(produto.usuarioPublico(c.get("usuarioId")));
   });
 
+  app.patch("/api/eu/senha", async (c) => {
+    const corpo = await c.req.json<{ senhaAtual: string; senhaNova: string }>();
+    produto.alterarMinhaSenha(c.get("usuarioId"), corpo.senhaAtual ?? "", corpo.senhaNova ?? "");
+    return c.json({ ok: true });
+  });
+
   app.get("/api/cores", (c) => c.json(produto.listarCores()));
 
   app.post("/api/cores", async (c) => {

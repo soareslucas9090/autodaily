@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import pinSvg from "./assets/pushpin.svg?raw";
 import { api, type Caneta, type Card, type Categoria, type Cor, type Eu, type Mural, type Papel } from "./api";
 
-type Tela = "mural" | "historico" | "relatorios" | "membros" | "categorias" | "cores";
+type Tela = "mural" | "historico" | "relatorios" | "conta" | "membros" | "categorias" | "cores";
 
 function aplicarTema(tema: "claro" | "escuro") {
   document.documentElement.dataset.tema = tema;
@@ -44,6 +44,7 @@ export default function App() {
           <button type="button" aria-current={tela === "mural" ? "page" : undefined} onClick={() => setTela("mural")}>Mural</button>
           <button type="button" aria-current={tela === "historico" ? "page" : undefined} onClick={() => setTela("historico")}>Histórico</button>
           <button type="button" aria-current={tela === "relatorios" ? "page" : undefined} onClick={() => setTela("relatorios")}>Relatórios</button>
+          <button type="button" aria-current={tela === "conta" ? "page" : undefined} onClick={() => setTela("conta")}>Conta</button>
           {eu.papel === "admin" && (
             <>
               <button type="button" aria-current={tela === "membros" ? "page" : undefined} onClick={() => setTela("membros")}>Membros</button>
@@ -94,6 +95,7 @@ export default function App() {
         )}
         {tela === "historico" && <Historico eu={eu} />}
         {tela === "relatorios" && <Relatorios />}
+        {tela === "conta" && <Conta eu={eu} aoAvisar={setAviso} />}
         {tela === "membros" && eu.papel === "admin" && <Membros />}
         {tela === "categorias" && eu.papel === "admin" && <Categorias />}
         {tela === "cores" && eu.papel === "admin" && <Cores />}
@@ -509,6 +511,88 @@ function Relatorios() {
           </table>
         </>
       )}
+    </section>
+  );
+}
+
+function Conta({ eu, aoAvisar }: { eu: Eu; aoAvisar: (texto: string) => void }) {
+  const [senhaAtual, setSenhaAtual] = useState("");
+  const [senhaNova, setSenhaNova] = useState("");
+  const [confirmacao, setConfirmacao] = useState("");
+  const [aviso, setAviso] = useState("");
+  const [ok, setOk] = useState("");
+
+  return (
+    <section className="folha painel">
+      <h1 className="nome">Conta</h1>
+      <p className="rotulo">Conectado como {eu.username}</p>
+      <form
+        className="filtros"
+        onSubmit={(evento) => {
+          evento.preventDefault();
+          setOk("");
+          if (senhaNova !== confirmacao) {
+            setAviso("A confirmação não bate com a nova senha.");
+            aoAvisar("");
+            return;
+          }
+          api
+            .alterarSenha(senhaAtual, senhaNova)
+            .then(() => {
+              setSenhaAtual("");
+              setSenhaNova("");
+              setConfirmacao("");
+              setAviso("");
+              setOk("Senha alterada.");
+              aoAvisar("");
+            })
+            .catch((erro: Error) => {
+              setOk("");
+              setAviso(erro.message);
+              aoAvisar("");
+            });
+        }}
+      >
+        <label className="campo">
+          <span>Senha atual</span>
+          <input
+            className="linha"
+            type="password"
+            value={senhaAtual}
+            onChange={(e) => setSenhaAtual(e.target.value)}
+            autoComplete="current-password"
+            required
+          />
+        </label>
+        <label className="campo">
+          <span>Nova senha</span>
+          <input
+            className="linha"
+            type="password"
+            placeholder="Mínimo 6 caracteres"
+            value={senhaNova}
+            onChange={(e) => setSenhaNova(e.target.value)}
+            autoComplete="new-password"
+            required
+            minLength={6}
+          />
+        </label>
+        <label className="campo">
+          <span>Confirmar nova senha</span>
+          <input
+            className="linha"
+            type="password"
+            value={confirmacao}
+            onChange={(e) => setConfirmacao(e.target.value)}
+            autoComplete="new-password"
+            required
+            minLength={6}
+          />
+        </label>
+        <button className="acao" type="submit">Alterar senha</button>
+      </form>
+      {ok && <p className="rotulo">{ok}</p>}
+      <p className="aviso">{aviso}</p>
     </section>
   );
 }

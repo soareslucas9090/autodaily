@@ -35,6 +35,18 @@ describe("aceitação", () => {
     );
   });
 
+  it("membro altera a própria senha e entra com a nova", () => {
+    const { produto, admin, criar } = novo();
+    const ana = criar("ana");
+    expect(() => produto.alterarMinhaSenha(ana.id, "errada", "654321")).toThrow(ErroDeRegra);
+    produto.alterarMinhaSenha(ana.id, "123456", "654321");
+    expect(() => produto.entrar("ana", "123456")).toThrow(ErroDeRegra);
+    expect(produto.entrar("ana", "654321").username).toBe("ana");
+    expect(() => produto.alterarMinhaSenha(admin.id, "segredo", "12345")).toThrow(ErroDeRegra);
+    produto.alterarMinhaSenha(admin.id, "segredo", "novaseg");
+    expect(produto.entrar("admin", "novaseg").papel).toBe("admin");
+  });
+
   it("desativado não entra e não aparece no mural", () => {
     const { produto, admin, criar } = novo();
     const ana = criar("ana");

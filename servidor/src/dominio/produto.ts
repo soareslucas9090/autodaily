@@ -188,6 +188,19 @@ export class Produto {
       .run();
   }
 
+  alterarMinhaSenha(usuarioId: string, senhaAtual: string, senhaNova: string): void {
+    const membro = this.buscarUsuario(usuarioId);
+    if (!conferirSenha(senhaAtual, membro.senhaHash)) {
+      throw new ErroDeRegra("credencial-invalida", "A senha atual não confere.");
+    }
+    exigirSenhaValida(senhaNova);
+    this.banco
+      .update(usuario)
+      .set({ senhaHash: gerarHash(senhaNova), atualizadoEm: agoraIso(this.instante()) })
+      .where(eq(usuario.id, usuarioId))
+      .run();
+  }
+
   private corDe(id: string | null) {
     if (!id) return null;
     const linha = this.banco.select().from(cor).where(eq(cor.id, id)).get();
