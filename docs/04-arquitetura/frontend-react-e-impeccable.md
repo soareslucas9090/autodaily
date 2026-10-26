@@ -1,7 +1,7 @@
 ---
 id: ARQ-02
 status: vigente
-atualizado: 2026-09-25
+atualizado: 2026-10-26
 ---
 
 # Frontend React e Impeccable
@@ -37,6 +37,8 @@ A interface só se dá por pronta depois de **`audit`** e **`polish`** na superf
 ## React e API
 
 A interface React consome a API **Hono** no mesmo repositório. Interações do mural (ciência, publicar, edição ao vivo) atualizam região afetada com transição contínua, conforme linguagem visual e RA-004 — não recarga brusca da página inteira.
+
+Sessões abertas escutam o aviso de tempo real da API (**RA-010**, **RF-026**). A tela visível (e o mural já carregado) reflete o estado novo sem recarregar o documento. Campo em foco na edição ao vivo não é substituído enquanto a pessoa digita.
 
 ## Edição do card (referência cruzada)
 

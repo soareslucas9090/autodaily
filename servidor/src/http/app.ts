@@ -1,6 +1,8 @@
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { streamSSE } from "hono/streaming";
+import { QuadroDeAvisos } from "./avisos.js";
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import type { Banco } from "../banco/abrir.js";
@@ -13,7 +15,13 @@ const COOKIE = "sessao";
 
 type Variaveis = { usuarioId: string; produto: Produto };
 
-export function criarApp(banco: Banco, relogio: () => Date = () => new Date()) {
+export type { QuadroDeAvisos };
+
+export function criarApp(
+  banco: Banco,
+  relogio: () => Date = () => new Date(),
+  avisos = new QuadroDeAvisos(),
+) {
   const produto = new Produto(banco, relogio);
   const app = new Hono<{ Variables: Variaveis }>();
   app.use("/api/*", cors({ origin: "http://localhost:5173", credentials: true }));
@@ -31,6 +39,16 @@ export function criarApp(banco: Banco, relogio: () => Date = () => new Date()) {
     const publica = c.req.path === "/api/sessao" && c.req.method === "POST";
     if (!publica && !c.get("usuarioId")) return c.json({ erro: "nao-autenticado" }, 401);
     await next();
+  });
+
+  app.use("/api/*", async (c, next) => {
+    await next();
+    const metodo = c.req.method;
+    if (metodo !== "POST" && metodo !== "PATCH" && metodo !== "DELETE") return;
+    if (c.res.status < 200 || c.res.status >= 300) return;
+    const caminho = c.req.path;
+    if (caminho === "/api/sessao" || caminho === "/api/eu/senha") return;
+    avisos.avisar();
   });
 
   app.onError((erro, c) => {
@@ -60,6 +78,36 @@ export function criarApp(banco: Banco, relogio: () => Date = () => new Date()) {
   });
 
   app.get("/api/sessao", (c) => c.json(produto.usuarioPublico(c.get("usuarioId"))));
+
+  app.get("/api/eventos", (c) => {
+    c.header("Cache-Control", "no-cache");
+    c.header("X-Accel-Buffering", "no");
+    return streamSSE(c, async (stream) => {
+      let fila = Promise.resolve();
+      const enfileirar = (evento: { event: string; data: string }) => {
+        fila = fila.then(() => stream.writeSSE(evento)).catch(() => {});
+        return fila;
+      };
+
+      await enfileirar({ event: "pronto", data: "{}" });
+
+      const desassinar = avisos.assinar((_evento, dados) => {
+        void enfileirar({ event: "mudou", data: dados });
+      });
+
+      const ping = setInterval(() => {
+        void enfileirar({ event: "ping", data: "" });
+      }, 15_000);
+
+      await new Promise<void>((resolve) => {
+        stream.onAbort(() => {
+          clearInterval(ping);
+          desassinar();
+          resolve();
+        });
+      });
+    });
+  });
 
   app.patch("/api/eu/caneta", async (c) => {
     const corpo = await c.req.json<{ caneta: Caneta }>();

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import pinSvg from "./assets/pushpin.svg?raw";
-import { api, type Caneta, type Card, type Categoria, type Cor, type Eu, type Mural, type Papel } from "./api";
+import { api, ouvirAvisos, type Caneta, type Card, type Categoria, type Cor, type Eu, type Mural, type Papel } from "./api";
 
 type Tela = "mural" | "historico" | "relatorios" | "conta" | "membros" | "categorias" | "cores";
 
@@ -19,6 +19,8 @@ export default function App() {
   const [tela, setTela] = useState<Tela>("mural");
   const [mural, setMural] = useState<Mural | null>(null);
   const [aviso, setAviso] = useState("");
+  const [epoca, setEpoca] = useState(0);
+  const avisoTimer = useRef(0);
 
   useEffect(() => {
     aplicarTema(tema);
@@ -30,8 +32,34 @@ export default function App() {
 
   useEffect(() => {
     if (!eu) return;
-    api.mural().then(setMural).catch((erro: Error) => setAviso(erro.message));
-  }, [eu]);
+    const parar = ouvirAvisos(() => {
+      window.clearTimeout(avisoTimer.current);
+      avisoTimer.current = window.setTimeout(() => {
+        api
+          .eu()
+          .then((pessoa) => {
+            setEu(pessoa);
+            aplicarCaneta(pessoa.caneta);
+          })
+          .catch((erro: Error) => {
+            if (erro.message === "nao-autenticado") setEu(null);
+          });
+        setEpoca((n) => n + 1);
+      }, 120);
+    });
+    return () => {
+      window.clearTimeout(avisoTimer.current);
+      parar();
+    };
+  }, [eu?.id]);
+
+  useEffect(() => {
+    if (!eu) return;
+    api.mural().then(setMural).catch((erro: Error) => {
+      if (erro.message === "nao-autenticado") setEu(null);
+      else setAviso(erro.message);
+    });
+  }, [eu?.id, epoca]);
 
   if (eu === undefined) return <main className="entrar"><p>Abrindo a parede…</p></main>;
   if (!eu) return <Entrar aoEntrar={(pessoa) => { setEu(pessoa); aplicarCaneta(pessoa.caneta); }} />;
@@ -56,6 +84,7 @@ export default function App() {
         {eu.papel === "programador" && (
           <SeletorDeCor
             eu={eu}
+            epoca={epoca}
             aoEscolher={(pessoa) => {
               setEu(pessoa);
               api.mural().then(setMural).catch((erro: Error) => setAviso(erro.message));
@@ -93,12 +122,12 @@ export default function App() {
         {tela === "mural" && mural && (
           <MuralTela mural={mural} eu={eu} aoMudar={setMural} aoAvisar={setAviso} />
         )}
-        {tela === "historico" && <Historico eu={eu} />}
-        {tela === "relatorios" && <Relatorios />}
+        {tela === "historico" && <Historico eu={eu} epoca={epoca} />}
+        {tela === "relatorios" && <Relatorios epoca={epoca} />}
         {tela === "conta" && <Conta eu={eu} aoAvisar={setAviso} />}
-        {tela === "membros" && eu.papel === "admin" && <Membros />}
-        {tela === "categorias" && eu.papel === "admin" && <Categorias />}
-        {tela === "cores" && eu.papel === "admin" && <Cores />}
+        {tela === "membros" && eu.papel === "admin" && <Membros epoca={epoca} />}
+        {tela === "categorias" && eu.papel === "admin" && <Categorias epoca={epoca} />}
+        {tela === "cores" && eu.papel === "admin" && <Cores epoca={epoca} />}
       </main>
     </div>
   );
@@ -359,7 +388,7 @@ function TextoVivo({
   );
 }
 
-function Historico({ eu }: { eu: Eu }) {
+function Historico({ eu, epoca }: { eu: Eu; epoca: number }) {
   const [inicio, setInicio] = useState("");
   const [fim, setFim] = useState("");
   const [atalho, setAtalho] = useState("mes-atual");
@@ -374,6 +403,9 @@ function Historico({ eu }: { eu: Eu }) {
 
   useEffect(() => {
     api.programadores().then(setProgramadores).catch((erro: Error) => setAviso(erro.message));
+  }, [epoca]);
+
+  useEffect(() => {
     api.periodo("mes-atual").then((p) => { setInicio(p.inicio); setFim(p.fim); });
   }, []);
 
@@ -383,7 +415,7 @@ function Historico({ eu }: { eu: Eu }) {
     if (idTrello) params.set("idTrello", idTrello);
     if (programadorId) params.set("programadorId", programadorId);
     api.historico(params).then((r) => { setItens(r.itens); setTotal(r.total); }).catch((erro: Error) => setAviso(erro.message));
-  }, [inicio, fim, idTrello, programadorId, ordem, limite]);
+  }, [inicio, fim, idTrello, programadorId, ordem, limite, epoca]);
 
   return (
     <section className="folha painel">
@@ -451,7 +483,7 @@ function Historico({ eu }: { eu: Eu }) {
   );
 }
 
-function Relatorios() {
+function Relatorios({ epoca }: { epoca: number }) {
   const [inicio, setInicio] = useState("");
   const [fim, setFim] = useState("");
   const [modo, setModo] = useState<"simples" | "completo">("simples");
@@ -465,7 +497,7 @@ function Relatorios() {
     if (!inicio || !fim) return;
     const params = new URLSearchParams({ inicio, fim, modo });
     api.relatorio(params).then(setDados);
-  }, [inicio, fim, modo]);
+  }, [inicio, fim, modo, epoca]);
 
   const porProgramador = (dados?.porProgramador ?? []) as { username: string; quantidade: number }[];
   const porDia = (dados?.porDia ?? []) as { dia: string; quantidade: number }[];
@@ -603,7 +635,7 @@ function rotuloPapel(papel: Papel) {
   return papel === "admin" ? "Admin" : "Programador";
 }
 
-function Membros() {
+function Membros({ epoca }: { epoca: number }) {
   const [lista, setLista] = useState<Membro[] | null>(null);
   const [username, setUsername] = useState("");
   const [senha, setSenha] = useState("");
@@ -621,7 +653,7 @@ function Membros() {
       setLista((atual) => atual ?? []);
     });
   }
-  useEffect(() => { carregar(); }, []);
+  useEffect(() => { carregar(); }, [epoca]);
 
   useEffect(() => {
     if (redefinirId) campoNovaSenha.current?.focus();
@@ -818,14 +850,14 @@ function Membros() {
   );
 }
 
-function Categorias() {
+function Categorias({ epoca }: { epoca: number }) {
   const [lista, setLista] = useState<Categoria[]>([]);
   const [nome, setNome] = useState("");
   const [aviso, setAviso] = useState("");
   function carregar() {
     api.categorias().then(setLista).catch((erro: Error) => setAviso(erro.message));
   }
-  useEffect(carregar, []);
+  useEffect(carregar, [epoca]);
   return (
     <section className="folha painel">
       <h1 className="nome">Categorias</h1>
@@ -891,10 +923,12 @@ function Taxinha({ hex, marcada }: { hex: string | null; marcada: boolean }) {
 
 function SeletorDeCor({
   eu,
+  epoca,
   aoEscolher,
   aoFalhar,
 }: {
   eu: Eu;
+  epoca: number;
   aoEscolher: (eu: Eu) => void;
   aoFalhar: (erro: Error) => void;
 }) {
@@ -910,7 +944,7 @@ function SeletorDeCor({
     }
     document.addEventListener("mousedown", fechar);
     return () => document.removeEventListener("mousedown", fechar);
-  }, [aberto]);
+  }, [aberto, epoca, aoFalhar]);
 
   const livres = cores.filter((item) => !item.ocupadaPor || item.ocupadaPor === eu.username);
 
@@ -951,7 +985,7 @@ function SeletorDeCor({
   );
 }
 
-function Cores() {
+function Cores({ epoca }: { epoca: number }) {
   const [lista, setLista] = useState<(Cor & { ocupadaPor: string | null })[]>([]);
   const [nome, setNome] = useState("");
   const [hex, setHex] = useState("#5c7c99");
@@ -959,7 +993,7 @@ function Cores() {
   function carregar() {
     api.cores().then(setLista).catch((erro: Error) => setAviso(erro.message));
   }
-  useEffect(carregar, []);
+  useEffect(carregar, [epoca]);
   return (
     <section className="folha painel">
       <h1 className="nome">Cores</h1>

@@ -32,6 +32,7 @@ SDD aqui é Specification-Driven Development: a especificação descreve o compo
 | [`docs/02-especificacoes/05-membros-e-acesso.md`](02-especificacoes/05-membros-e-acesso.md) | Membros e acesso | fechada |
 | [`docs/02-especificacoes/06-categorias.md`](02-especificacoes/06-categorias.md) | Categorias | fechada |
 | [`docs/02-especificacoes/07-cores.md`](02-especificacoes/07-cores.md) | Cores do post-it | fechada |
+| [`docs/02-especificacoes/08-tempo-real.md`](02-especificacoes/08-tempo-real.md) | Tempo real nas telas abertas | fechada |
 | [`docs/03-experiencia/linguagem-visual.md`](03-experiencia/linguagem-visual.md) | Linguagem visual | fechada |
 | [`docs/04-arquitetura/restricoes-tecnicas.md`](04-arquitetura/restricoes-tecnicas.md) | Restrições técnicas | fechada |
 | [`docs/04-arquitetura/frontend-react-e-impeccable.md`](04-arquitetura/frontend-react-e-impeccable.md) | Frontend React e skill Impeccable | vigente |
@@ -70,3 +71,4 @@ A spec descreve comportamento observável. Nome de classe e arquivo só aparece 
 - **2026-09-25** — specs de comportamento promovidas a fechada, sem mudança de regra, para a implementação TypeScript.
 - **2026-09-25** — cores de post-it: catálogo do admin, escolha exclusiva do programador, taxinha da cor de quem marcou, barra 30% mais clara e 30% mais escura que o card, ícone de caneta e sol/lua, canto inferior direito dobrado.
 - **2026-09-25** — tirar da parede guarda o papel no histórico; exclusão definitiva continua só no histórico. “Mostrar mais” amplia a página sem sair dos filtros já escolhidos.
+- **2026-10-26** — tempo real: mural, histórico, relatórios, membros, categorias e cores acompanham o que o time gravou, sem recarga completa da página. Edição no lugar não perde o texto em foco.

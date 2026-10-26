@@ -98,3 +98,9 @@ export const api = {
   editarMembro: (id: string, corpo: { username?: string; senha?: string; ativo?: boolean; papel?: Papel }) =>
     pedir(`/api/membros/${id}`, { method: "PATCH", body: JSON.stringify(corpo) }),
 };
+
+export function ouvirAvisos(aoMudar: () => void): () => void {
+  const fonte = new EventSource("/api/eventos");
+  fonte.addEventListener("mudou", aoMudar);
+  return () => fonte.close();
+}

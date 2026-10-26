@@ -1,7 +1,7 @@
 ---
 id: ARQ-01
 status: fechada
-atualizado: 2026-09-25
+atualizado: 2026-10-26
 ---
 
 # Restrições técnicas
@@ -35,6 +35,12 @@ Um lugar único de bases reutilizáveis. Repetição do mesmo padrão em cada te
 ## RA-004 Atualização parcial na interface
 
 Marcar ciência e publicar tarefa atualizam a região afetada. Proibido desenhar essas ações como recarga completa obrigatória da página.
+
+## RA-010 Tempo real entre sessões
+
+Quem está autenticado recebe aviso do servidor quando o estado compartilhado muda. A interface busca de novo a superfície que está mostrando. Proibido exigir recarga completa da página para ver o que outro membro acabou de gravar.
+
+O aviso é **SSE** na API Hono, autenticado pela mesma sessão. Não é WebSocket nesta rodada. Não é recarga periódica cega da página inteira.
 
 ## RA-005 Autenticação e Usuario
 
