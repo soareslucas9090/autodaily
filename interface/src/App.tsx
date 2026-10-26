@@ -194,6 +194,7 @@ function CardFolha({
   aoAvisar: (texto: string) => void;
 }) {
   const tarefa = card.tarefa;
+  const minhaCiencia = tarefa?.ciencias.find((ciencia) => ciencia.acionavel);
   const [aviso, setAviso] = useState("");
   const [escolhendo, setEscolhendo] = useState(false);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
@@ -203,6 +204,12 @@ function CardFolha({
   function falha(erro: Error) {
     setAviso(erro.message);
     aoAvisar("");
+  }
+
+  function alternarCiencia() {
+    if (!tarefa || !minhaCiencia) return;
+    const pedido = minhaCiencia.marcada ? api.desmarcar(tarefa.id) : api.marcar(tarefa.id);
+    pedido.then(aoMudar).catch(falha);
   }
 
   return (
@@ -223,6 +230,18 @@ function CardFolha({
       <h2 className="nome">{card.programador.username}</h2>
       {tarefa ? (
         <>
+          {minhaCiencia && (
+            <button
+              type="button"
+              className="pinar"
+              aria-pressed={minhaCiencia.marcada}
+              aria-label={minhaCiencia.marcada ? "Desmarcar ciência" : "Marcar ciência"}
+              onClick={alternarCiencia}
+            >
+              <Taxinha hex={minhaCiencia.cor?.hex ?? null} marcada={minhaCiencia.marcada} />
+              {minhaCiencia.marcada ? "Despinar" : "Pinar"}
+            </button>
+          )}
           {tarefa.podeEditar ? (
             <button type="button" className="rotulo" onClick={() => {
               setEscolhendo((v) => !v);
@@ -273,13 +292,10 @@ function CardFolha({
                   aria-pressed={ciencia.marcada}
                   aria-label={`${ciencia.marcada ? "Ciência marcada" : "Marcar ciência"} de ${ciencia.username}`}
                   disabled={!ciencia.acionavel}
-                  onClick={() => {
-                    const pedido = ciencia.marcada ? api.desmarcar(tarefa.id) : api.marcar(tarefa.id);
-                    pedido.then(aoMudar).catch(falha);
-                  }}
+                  onClick={ciencia.acionavel ? alternarCiencia : undefined}
                 >
                   <Taxinha hex={ciencia.cor?.hex ?? null} marcada={ciencia.marcada} />
-                  {ciencia.username}
+                  <span className="alfinete-nome">{ciencia.username.replaceAll(".", ".\u200B")}</span>
                 </button>
               </li>
             ))}

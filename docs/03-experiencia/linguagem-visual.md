@@ -1,7 +1,7 @@
 ---
 id: EXP-01
 status: fechada
-atualizado: 2026-09-25
+atualizado: 2026-10-26
 ---
 
 # Linguagem visual
@@ -21,6 +21,8 @@ Material **papel de jornal**: folha acinzentada, fibra visível, leitura de obje
 ## RV-001 Responsivo
 
 Utilizável em tela estreita, tablet e desktop. Mural empilha quando não cabe lado a lado. Alvo de toque confortável na marcação de ciência. Não fixar breakpoint numérico nesta rodada.
+
+As taxinhas da ciência no card cabem **pelo menos duas por linha**, mesmo com cerca de dez programadores e nomes longos. O nome continua visível junto da taxinha. O botão Pinar e o clique no próprio pino permanecem (ESP-02).
 
 ## RV-002 Temas
 

@@ -1,7 +1,7 @@
 ---
 id: ESP-02
 status: fechada
-atualizado: 2026-09-24
+atualizado: 2026-10-26
 ---
 
 # Ciência e progresso
@@ -27,6 +27,13 @@ No card de outra pessoa, só a marcação do programador logado pode ser alterad
 No próprio card, o autor não tem marcação acionável; vê a dos outros.
 
 O programador logado **pode desmarcar** a própria ciência. Admin não marca nem desmarca.
+
+No card de outra pessoa, o programador logado pina de **dois jeitos equivalentes**:
+
+- o botão **Pinar** / **Despinar**, sempre no mesmo lugar, logo abaixo do nome de quem publicou;
+- a marcação com o **próprio nome** na lista de alfinetes.
+
+Os dois marcam e desmarcam a mesma ciência. Não há terceira ciência. Quem não é o logado continua só vendo a taxinha do nome.
 
 **Regra derivada necessária:** cada marcação identifica qual programador ela representa. Sem isso o controle não cumpre o requisito.
 
@@ -68,6 +75,7 @@ Quando o programador retorna a tarefa guardada mais recente após excluir a atua
 
 - **Dado** um card de outro programador e o time com 6 programadores ativos (sem admin no denominador), **quando** o programador logado marca a própria ciência e já existia 1 outra marcação, **então** a barra reflete preenchimento 40% e texto interno **2/5**.
 - **Dado** um card de outro programador, **quando** o programador logado tenta alterar a marcação de outro, **então** não consegue (somente a própria é acionável).
+- **Dado** um card de outro programador, **quando** o programador logado aciona Pinar, **então** a ciência fica marcada como se tivesse clicado no próprio nome; o botão passa a Despinar e a taxinha do nome também aparece presa.
 - **Dado** um card de outro programador com ciência marcada pelo logado, **quando** o logado desmarca a própria ciência, **então** x e y e o preenchimento da barra atualizam de acordo.
 - **Dado** o próprio card, **quando** o autor visualiza as marcações, **então** não há controle para marcar ciência sobre o próprio papel.
 - **Dado** admin autenticado, **quando** visualiza cards no mural, **então** não há marcação de ciência acionável para o admin.

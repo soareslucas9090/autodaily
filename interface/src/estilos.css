@@ -163,6 +163,7 @@ button.icone.caneta { color: var(--caneta); }
 .folha.post-it .meta,
 .folha.post-it .acao,
 .folha.post-it .alfinete,
+.folha.post-it .pinar,
 .folha.post-it .categorias-escolha {
   color: var(--postit-legenda);
   transition: color var(--duracao) var(--curva);
@@ -289,24 +290,76 @@ button.icone.caneta { color: var(--caneta); }
   opacity: 0.85;
 }
 
+.pinar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.55rem -0.15rem;
+  padding: 0.1rem 0.35rem 0.1rem 0.15rem;
+  min-height: 2.85rem;
+  color: var(--tinta);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  transition: color var(--duracao) var(--curva), opacity var(--duracao) var(--curva);
+}
+
+.pinar:hover {
+  opacity: 0.82;
+}
+
+.pinar:focus-visible,
+.alfinete:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 2px;
+}
+
+.pinar .taxinha {
+  width: 2.45rem;
+  height: 3.05rem;
+}
+
 .ciencias {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 0.7rem;
-  margin-top: 0.85rem;
-  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0.35rem;
+  row-gap: 0.1rem;
+  margin-top: 0.7rem;
+  padding: 0 0 0.2rem;
   list-style: none;
 }
 
+.ciencias li {
+  min-width: 0;
+}
+
 .alfinete {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.15rem;
+  gap: 0.28rem;
+  width: 100%;
+  min-width: 0;
   background: transparent;
   border: 0;
-  padding: 0.15rem 0.2rem 0;
+  padding: 0.12rem 0.1rem 0.12rem 0;
   color: var(--tinta-suave);
   min-height: 2.75rem;
+  text-align: left;
+}
+
+.ciencias .taxinha {
+  width: 1.85rem;
+  height: 2.35rem;
+  flex: 0 0 auto;
+}
+
+.alfinete-nome {
+  min-width: 0;
+  overflow-wrap: break-word;
+  line-height: 1.2;
+  font-size: 0.8rem;
 }
 
 .taxinha {

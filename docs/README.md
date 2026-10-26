@@ -72,3 +72,5 @@ A spec descreve comportamento observável. Nome de classe e arquivo só aparece 
 - **2026-09-25** — cores de post-it: catálogo do admin, escolha exclusiva do programador, taxinha da cor de quem marcou, barra 30% mais clara e 30% mais escura que o card, ícone de caneta e sol/lua, canto inferior direito dobrado.
 - **2026-09-25** — tirar da parede guarda o papel no histórico; exclusão definitiva continua só no histórico. “Mostrar mais” amplia a página sem sair dos filtros já escolhidos.
 - **2026-10-26** — tempo real: mural, histórico, relatórios, membros, categorias e cores acompanham o que o time gravou, sem recarga completa da página. Edição no lugar não perde o texto em foco.
+- **2026-10-26** — no card alheio, Pinar/Despinar logo abaixo do nome de quem publicou, além da taxinha no próprio nome da lista.
+- **2026-10-26** — taxinhas da ciência em pelo menos duas por linha no card, com o nome ainda visível.
